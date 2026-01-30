@@ -3,12 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "wrangler pages dev public --kv SITE_CONFIG --kv AUTH_TOKENS --r2 IMAGES",
-    "deploy": "wrangler pages deploy public",
+    "prebuild": "node -e \"require('fs').mkdirSync('public/assets',{recursive:true})\"",
+    "build:css": "node ./node_modules/tailwindcss/lib/cli.js -c tailwind.config.js -i ./src/tailwind.css -o ./public/assets/tailwind.css --minify",
+    "build:js": "node -e \"require('fs').copyFileSync('src/app.js','public/assets/app.js')\"",
+    "build": "npm run prebuild && npm run build:css && npm run build:js",
+    "dev": "npm run build && wrangler pages dev public --kv SITE_CONFIG --kv AUTH_TOKENS --r2 IMAGES",
+    "deploy": "npm run build && wrangler pages deploy public",
     "kv:create": "wrangler kv:namespace create SITE_CONFIG && wrangler kv:namespace create AUTH_TOKENS",
     "r2:create": "wrangler r2 bucket create javian-images"
   },
   "devDependencies": {
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/typography": "^0.5.16",
+    "tailwindcss": "^3.4.17",
     "wrangler": "^3.0.0"
   }
 }

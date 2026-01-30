@@ -12,13 +12,30 @@ const CONFIG_KEY = 'homepage_config';
 // GET: 获取配置
 export async function onRequestGet(context) {
   try {
-    const config = await context.env.SITE_CONFIG.get(CONFIG_KEY, { type: 'json' });
-    
-    return new Response(JSON.stringify(config || getDefaultConfig()), {
-      headers: { 
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache'
-      }
+    const config =
+      (await context.env.SITE_CONFIG.get(CONFIG_KEY, { type: "json" })) ||
+      getDefaultConfig();
+
+    const updatedAt = typeof config?.updatedAt === "number" ? config.updatedAt : 0;
+    const etag = `W/\"${updatedAt}\"`;
+
+    const ifNoneMatch = context.request.headers.get("If-None-Match");
+    if (ifNoneMatch && ifNoneMatch === etag) {
+      return new Response(null, {
+        status: 304,
+        headers: {
+          ETag: etag,
+          "Cache-Control": "public, max-age=60",
+        },
+      });
+    }
+
+    return new Response(JSON.stringify(config), {
+      headers: {
+        "Content-Type": "application/json",
+        ETag: etag,
+        "Cache-Control": "public, max-age=60",
+      },
     });
   } catch (error) {
     return new Response(JSON.stringify(getDefaultConfig()), {
