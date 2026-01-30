@@ -1220,6 +1220,177 @@
       let originalConfig = null;
 
       // ==============================
+      // Utility Functions
+      // ==============================
+      function generateId() {
+        return (
+          Date.now().toString(36) + Math.random().toString(36).substr(2, 9)
+        );
+      }
+
+      // ==============================
+      // Load Config from KV
+      // ==============================
+      async function loadConfig() {
+        try {
+          const res = await fetch("/api/config");
+          if (res.ok) {
+            currentConfig = await res.json();
+            renderConfig(currentConfig);
+          }
+        } catch (error) {
+          console.log("Config API not available, using empty state");
+        }
+      }
+
+      // ==============================
+      // Render Config to DOM
+      // ==============================
+      function renderConfig(config) {
+        if (!config) return;
+
+        // Render timeline
+        if (config.timeline && config.timeline.length > 0) {
+          renderTimeline(config.timeline);
+        }
+
+        // Render tags
+        if (config.tags && config.tags.length > 0) {
+          renderTags(config.tags);
+        }
+
+        // Render sites
+        if (config.sites && config.sites.length > 0) {
+          renderSites(config.sites);
+        }
+
+        // Render info
+        if (config.info) {
+          const locationEl = document.querySelector('[data-field="location"]');
+          const statusEl = document.querySelector('[data-field="status"]');
+          if (locationEl && config.info.location)
+            locationEl.textContent = config.info.location;
+          if (statusEl && config.info.status)
+            statusEl.textContent = config.info.status;
+        }
+
+        // Render images
+        if (config.images) {
+          if (config.images.avatar) {
+            const avatarImg = document.querySelector(".avatar-container img");
+            if (avatarImg) avatarImg.src = config.images.avatar;
+          }
+          if (config.images.background) {
+            const bgImg = document.querySelector(".theme-bg-dark img");
+            if (bgImg) bgImg.src = config.images.background;
+          }
+        }
+      }
+
+      function renderTimeline(timeline) {
+        const container = document.getElementById("timelineItems");
+        if (!container) return;
+
+        // Keep the add button
+        const addBtn = container.querySelector(".edit-add-btn");
+        container.innerHTML = "";
+
+        timeline.forEach((item, index) => {
+          const isHighlight = index === 0; // First item is highlighted
+          const div = document.createElement("div");
+          div.className = `relative group fade-left-active delay-${(index + 1) * 100}`;
+          div.setAttribute("data-editable", "timeline");
+          div.setAttribute("data-id", item.id || generateId());
+
+          const dotClass = isHighlight
+            ? "timeline-dot absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full ring-4 ring-black/20 z-10 animate-pulse-glow"
+            : "absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full bg-slate-500 group-hover:bg-white transition-colors z-10 ring-4 ring-black/20";
+
+          const dateStyle = isHighlight
+            ? "color: var(--accent-color)"
+            : "color: var(--text-muted)";
+
+          const dateClass = isHighlight
+            ? "text-xs font-bold mb-1 tracking-wider opacity-80"
+            : "text-xs mb-1 tracking-wider";
+
+          div.innerHTML = `
+            <div class="${dotClass}"></div>
+            <div class="${dateClass}" style="${dateStyle}" data-field="date">${item.date}</div>
+            <h4 class="text-sm font-semibold group-hover:opacity-80 transition-colors heading" data-field="title">${item.title}</h4>
+            <button class="edit-delete-btn edit-control hidden absolute -right-2 -top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+          `;
+
+          container.appendChild(div);
+        });
+
+        // Re-add the button
+        if (addBtn) container.appendChild(addBtn);
+      }
+
+      function renderTags(tags) {
+        const container = document.getElementById("tagsContainer");
+        if (!container) return;
+
+        const addBtn = container.querySelector(".edit-add-btn");
+        container.innerHTML = "";
+
+        tags.forEach((tag) => {
+          const span = document.createElement("span");
+          span.className =
+            "tag px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-default wobble-hover relative";
+          span.setAttribute("data-editable", "tag");
+          span.innerHTML = `
+            <span data-field="tag">${tag}</span>
+            <button class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+          `;
+          container.appendChild(span);
+        });
+
+        if (addBtn) container.appendChild(addBtn);
+      }
+
+      function renderSites(sites) {
+        const container = document.getElementById("sitesContainer");
+        if (!container) return;
+
+        const addBtn = container.querySelector(".edit-add-btn");
+        container.innerHTML = "";
+
+        sites.forEach((site, index) => {
+          const div = document.createElement("div");
+          div.className = `group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-${(index + 3) * 100} wobble-hover relative`;
+          div.setAttribute("data-editable", "site");
+          div.setAttribute("data-id", site.id || generateId());
+          div.setAttribute("data-url", site.url || "#");
+
+          const iconClass = site.icon
+            ? site.icon.startsWith("fa-")
+              ? `fas ${site.icon}`
+              : `fas fa-${site.icon}`
+            : "fas fa-link";
+
+          div.innerHTML = `
+            <div class="flex justify-between items-start mb-3">
+              <h3 class="font-bold text-lg group-hover:opacity-80 transition-colors heading" data-field="title">${site.title}</h3>
+              <div class="site-card-icon w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]" data-field="icon">
+                <i class="${iconClass}"></i>
+              </div>
+            </div>
+            <p class="text-xs font-light" style="color: var(--text-muted)" data-field="description">${site.description || ""}</p>
+            <button class="edit-delete-btn edit-control hidden absolute right-2 top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+          `;
+
+          container.appendChild(div);
+        });
+
+        if (addBtn) container.appendChild(addBtn);
+      }
+
+      // Load config on page load
+      document.addEventListener("DOMContentLoaded", loadConfig);
+
+      // ==============================
       // Theme Toggle Logic
       // ==============================
       const themeToggle = document.getElementById("themeToggle");
