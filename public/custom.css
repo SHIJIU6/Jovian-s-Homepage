@@ -88,6 +88,23 @@
         overflow-x: hidden;
       }
 
+      ::selection {
+        background: rgba(16, 185, 129, 0.35);
+        color: #ffffff;
+      }
+      ::-moz-selection {
+        background: rgba(16, 185, 129, 0.35);
+        color: #ffffff;
+      }
+      :root.theme-handdrawn ::selection {
+        background: rgba(34, 197, 94, 0.28);
+        color: #111827;
+      }
+      :root.theme-handdrawn ::-moz-selection {
+        background: rgba(34, 197, 94, 0.28);
+        color: #111827;
+      }
+
       h1,
       h2,
       h3,

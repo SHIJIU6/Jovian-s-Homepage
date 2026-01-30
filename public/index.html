@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <link href="/custom.css?v=20260130-9" rel="stylesheet" />
+    <link href="/custom.css?v=20260130-10" rel="stylesheet" />
     <link
       href="/assets/tailwind.css?v=20260130-2"
       rel="stylesheet"
@@ -73,9 +73,7 @@
       rel="stylesheet"
     />
   </head>
-  <body
-    class="min-h-screen flex flex-col relative overflow-x-hidden selection:bg-primary selection:text-white"
-  >
+  <body class="min-h-screen flex flex-col relative overflow-x-hidden">
     <!-- Background Layers -->
     <div class="theme-bg-dark fixed inset-0 -z-10">
       <img
@@ -217,262 +215,262 @@
                   class="hidden absolute left-0 right-0 top-full mt-2 p-3 rounded-xl glass-panel z-50 shadow-xl"
                 >
                   <div class="flex flex-wrap gap-1" id="siteIconPickerGrid">
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-blog"
-                    title="博客"
-                  >
-                    <i class="fas fa-blog"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-cloud"
-                    title="云"
-                  >
-                    <i class="fas fa-cloud"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-folder"
-                    title="文件夹"
-                  >
-                    <i class="fas fa-folder"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-file"
-                    title="文件"
-                  >
-                    <i class="fas fa-file"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-home"
-                    title="首页"
-                  >
-                    <i class="fas fa-home"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-link"
-                    title="链接"
-                  >
-                    <i class="fas fa-link"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-book"
-                    title="书籍"
-                  >
-                    <i class="fas fa-book"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-code"
-                    title="代码"
-                  >
-                    <i class="fas fa-code"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-server"
-                    title="服务器"
-                  >
-                    <i class="fas fa-server"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-database"
-                    title="数据库"
-                  >
-                    <i class="fas fa-database"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-music"
-                    title="音乐"
-                  >
-                    <i class="fas fa-music"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-video"
-                    title="视频"
-                  >
-                    <i class="fas fa-video"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-image"
-                    title="图片"
-                  >
-                    <i class="fas fa-image"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-camera"
-                    title="相机"
-                  >
-                    <i class="fas fa-camera"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-gamepad"
-                    title="游戏"
-                  >
-                    <i class="fas fa-gamepad"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-shopping-cart"
-                    title="购物"
-                  >
-                    <i class="fas fa-shopping-cart"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fab fa-github"
-                    title="GitHub"
-                  >
-                    <i class="fab fa-github"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fab fa-twitter"
-                    title="Twitter"
-                  >
-                    <i class="fab fa-twitter"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fab fa-discord"
-                    title="Discord"
-                  >
-                    <i class="fab fa-discord"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fab fa-youtube"
-                    title="YouTube"
-                  >
-                    <i class="fab fa-youtube"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fab fa-bilibili"
-                    title="Bilibili"
-                  >
-                    <i class="fab fa-bilibili"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fab fa-weixin"
-                    title="微信"
-                  >
-                    <i class="fab fa-weixin"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fab fa-qq"
-                    title="QQ"
-                  >
-                    <i class="fab fa-qq"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-envelope"
-                    title="邮箱"
-                  >
-                    <i class="fas fa-envelope"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-pen"
-                    title="编辑"
-                  >
-                    <i class="fas fa-pen"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-star"
-                    title="星标"
-                  >
-                    <i class="fas fa-star"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-heart"
-                    title="喜欢"
-                  >
-                    <i class="fas fa-heart"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-tools"
-                    title="工具"
-                  >
-                    <i class="fas fa-tools"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-cog"
-                    title="设置"
-                  >
-                    <i class="fas fa-cog"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-globe"
-                    title="网站"
-                  >
-                    <i class="fas fa-globe"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-download"
-                    title="下载"
-                  >
-                    <i class="fas fa-download"></i>
-                  </button>
-                  <button
-                    type="button"
-                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
-                    data-icon="fas fa-rocket"
-                    title="火箭"
-                  >
-                    <i class="fas fa-rocket"></i>
-                  </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-blog"
+                      title="博客"
+                    >
+                      <i class="fas fa-blog"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-cloud"
+                      title="云"
+                    >
+                      <i class="fas fa-cloud"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-folder"
+                      title="文件夹"
+                    >
+                      <i class="fas fa-folder"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-file"
+                      title="文件"
+                    >
+                      <i class="fas fa-file"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-home"
+                      title="首页"
+                    >
+                      <i class="fas fa-home"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-link"
+                      title="链接"
+                    >
+                      <i class="fas fa-link"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-book"
+                      title="书籍"
+                    >
+                      <i class="fas fa-book"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-code"
+                      title="代码"
+                    >
+                      <i class="fas fa-code"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-server"
+                      title="服务器"
+                    >
+                      <i class="fas fa-server"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-database"
+                      title="数据库"
+                    >
+                      <i class="fas fa-database"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-music"
+                      title="音乐"
+                    >
+                      <i class="fas fa-music"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-video"
+                      title="视频"
+                    >
+                      <i class="fas fa-video"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-image"
+                      title="图片"
+                    >
+                      <i class="fas fa-image"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-camera"
+                      title="相机"
+                    >
+                      <i class="fas fa-camera"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-gamepad"
+                      title="游戏"
+                    >
+                      <i class="fas fa-gamepad"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-shopping-cart"
+                      title="购物"
+                    >
+                      <i class="fas fa-shopping-cart"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fab fa-github"
+                      title="GitHub"
+                    >
+                      <i class="fab fa-github"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fab fa-twitter"
+                      title="Twitter"
+                    >
+                      <i class="fab fa-twitter"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fab fa-discord"
+                      title="Discord"
+                    >
+                      <i class="fab fa-discord"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fab fa-youtube"
+                      title="YouTube"
+                    >
+                      <i class="fab fa-youtube"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fab fa-bilibili"
+                      title="Bilibili"
+                    >
+                      <i class="fab fa-bilibili"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fab fa-weixin"
+                      title="微信"
+                    >
+                      <i class="fab fa-weixin"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fab fa-qq"
+                      title="QQ"
+                    >
+                      <i class="fab fa-qq"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-envelope"
+                      title="邮箱"
+                    >
+                      <i class="fas fa-envelope"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-pen"
+                      title="编辑"
+                    >
+                      <i class="fas fa-pen"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-star"
+                      title="星标"
+                    >
+                      <i class="fas fa-star"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-heart"
+                      title="喜欢"
+                    >
+                      <i class="fas fa-heart"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-tools"
+                      title="工具"
+                    >
+                      <i class="fas fa-tools"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-cog"
+                      title="设置"
+                    >
+                      <i class="fas fa-cog"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-globe"
+                      title="网站"
+                    >
+                      <i class="fas fa-globe"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-download"
+                      title="下载"
+                    >
+                      <i class="fas fa-download"></i>
+                    </button>
+                    <button
+                      type="button"
+                      class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                      data-icon="fas fa-rocket"
+                      title="火箭"
+                    >
+                      <i class="fas fa-rocket"></i>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -649,7 +647,6 @@
                   </button>
                 </div>
               </div>
-
             </div>
             <div id="socialModalImageWrap" class="hidden">
               <label class="block text-sm mb-1 opacity-80"
