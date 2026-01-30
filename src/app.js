@@ -5,6 +5,7 @@
       let isEditMode = false;
       let currentConfig = null;
       let originalConfig = null;
+      let itemModalState = { type: null, mode: null, target: null };
 
       // ==============================
       // Utility Functions
@@ -13,6 +14,333 @@
         return (
           Date.now().toString(36) + Math.random().toString(36).substr(2, 9)
         );
+      }
+
+      function isValidUrlForNavigation(url) {
+        const trimmed = (url || "").trim();
+        return trimmed && trimmed !== "#";
+      }
+
+      function navigateToUrl(url) {
+        const trimmed = (url || "").trim();
+        if (!isValidUrlForNavigation(trimmed)) {
+          showToast("未设置链接", "info");
+          return;
+        }
+        window.open(trimmed, "_blank", "noopener,noreferrer");
+      }
+
+      function closeItemModal() {
+        const modal = document.getElementById("itemModal");
+        if (!modal) return;
+        modal.classList.add("hidden");
+        itemModalState = { type: null, mode: null, target: null };
+      }
+
+      function setIconPreview(previewEl, classValue) {
+        if (!previewEl) return;
+        const klass = (classValue || "").trim() || "fas fa-link";
+        previewEl.className = klass;
+      }
+
+      function fillSiteModal(target) {
+        const titleInput = document.getElementById("siteModalTitle");
+        const descInput = document.getElementById("siteModalDescription");
+        const urlInput = document.getElementById("siteModalUrl");
+        const iconInput = document.getElementById("siteModalIcon");
+        const accentInput = document.getElementById("siteModalAccent");
+        const preview = document.getElementById("siteModalIconPreview");
+
+        const title =
+          target?.querySelector('[data-field="title"]')?.textContent?.trim() ||
+          "";
+        const description =
+          target?.querySelector('[data-field="description"]')?.textContent?.trim() ||
+          "";
+        const url = target?.dataset?.url || "#";
+        const icon =
+          target?.querySelector('[data-field="icon"] i')?.className?.trim() ||
+          "fas fa-link";
+        const accent = !!target
+          ?.querySelector('[data-field="icon"]')
+          ?.classList?.contains("accent");
+
+        if (titleInput) titleInput.value = title;
+        if (descInput) descInput.value = description;
+        if (urlInput) urlInput.value = url;
+        if (iconInput) iconInput.value = icon;
+        if (accentInput) accentInput.checked = accent;
+        setIconPreview(preview, icon);
+
+        if (iconInput) {
+          iconInput.oninput = () => setIconPreview(preview, iconInput.value);
+        }
+      }
+
+      function fillSocialModal(target) {
+        const typeSelect = document.getElementById("socialModalType");
+        const urlInput = document.getElementById("socialModalUrl");
+        const iconInput = document.getElementById("socialModalIcon");
+        const imgInput = document.getElementById("socialModalImage");
+        const iconWrap = document.getElementById("socialModalIconWrap");
+        const imgWrap = document.getElementById("socialModalImageWrap");
+        const preview = document.getElementById("socialModalIconPreview");
+
+        const type = target?.dataset?.type || "icon";
+        const href = target?.getAttribute?.("href") || "#";
+        const icon =
+          target?.querySelector("i")?.className?.trim() || "fas fa-link";
+        const image = target?.querySelector("img")?.getAttribute("src") || "";
+
+        if (typeSelect) typeSelect.value = type;
+        if (urlInput) urlInput.value = href;
+        if (iconInput) iconInput.value = icon;
+        if (imgInput) imgInput.value = image;
+
+        const applyType = () => {
+          const current = typeSelect?.value || "icon";
+          if (current === "image") {
+            iconWrap?.classList.add("hidden");
+            imgWrap?.classList.remove("hidden");
+          } else {
+            imgWrap?.classList.add("hidden");
+            iconWrap?.classList.remove("hidden");
+          }
+        };
+
+        applyType();
+        if (typeSelect) typeSelect.onchange = applyType;
+
+        setIconPreview(preview, icon);
+        if (iconInput) {
+          iconInput.oninput = () => setIconPreview(preview, iconInput.value);
+        }
+      }
+
+      function openItemModal(type, { mode, target } = {}) {
+        const modal = document.getElementById("itemModal");
+        if (!modal) return;
+
+        itemModalState = { type, mode: mode || "edit", target: target || null };
+
+        const titleEl = document.getElementById("itemModalTitle");
+        const siteFields = document.getElementById("itemModalSiteFields");
+        const socialFields = document.getElementById("itemModalSocialFields");
+
+        siteFields?.classList.add("hidden");
+        socialFields?.classList.add("hidden");
+
+        if (type === "site") {
+          if (titleEl)
+            titleEl.textContent =
+              itemModalState.mode === "create" ? "添加站点" : "编辑站点";
+          siteFields?.classList.remove("hidden");
+          fillSiteModal(target);
+        }
+
+        if (type === "social") {
+          if (titleEl)
+            titleEl.textContent =
+              itemModalState.mode === "create"
+                ? "添加社交链接"
+                : "编辑社交链接";
+          socialFields?.classList.remove("hidden");
+          fillSocialModal(target);
+        }
+
+        modal.classList.remove("hidden");
+        modal.querySelector("input,textarea,select")?.focus();
+      }
+
+      function createSiteCardEl({ title, description, url, icon, accent }) {
+        const el = document.createElement("div");
+        el.className =
+          "group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 wobble-hover relative";
+        el.setAttribute("data-editable", "site");
+        el.setAttribute("data-id", generateId());
+        el.setAttribute("data-url", (url || "#").trim() || "#");
+        el.setAttribute("role", "link");
+        el.setAttribute("tabindex", "0");
+
+        const iconClass = (icon || "fas fa-link").trim() || "fas fa-link";
+        const accentClass = accent ? "accent" : "";
+
+        el.innerHTML = `
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-bold text-lg group-hover:opacity-80 transition-colors heading" data-field="title">${title}</h3>
+            <div class="site-card-icon ${accentClass} w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]" data-field="icon">
+              <i class="${iconClass}"></i>
+            </div>
+          </div>
+          <p class="text-xs font-light" style="color: var(--text-muted)" data-field="description">${description || ""}</p>
+          <button class="edit-delete-btn edit-control hidden absolute right-2 top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+        `;
+
+        if (isEditMode) {
+          el.classList.add("editable-active");
+          el.querySelectorAll(".edit-delete-btn").forEach((btn) => btn.classList.remove("hidden"));
+        }
+        return el;
+      }
+
+      function updateSiteCardEl(target, { title, description, url, icon, accent }) {
+        target.dataset.url = (url || "#").trim() || "#";
+        target.setAttribute("role", "link");
+        target.setAttribute("tabindex", "0");
+
+        const titleEl = target.querySelector('[data-field="title"]');
+        const descEl = target.querySelector('[data-field="description"]');
+        const iconEl = target.querySelector('[data-field="icon"] i');
+        const iconWrap = target.querySelector('[data-field="icon"]');
+
+        if (titleEl) titleEl.textContent = title;
+        if (descEl) descEl.textContent = description || "";
+        if (iconEl) iconEl.className = (icon || "fas fa-link").trim();
+        if (iconWrap) {
+          if (accent) iconWrap.classList.add("accent");
+          else iconWrap.classList.remove("accent");
+        }
+      }
+
+      function insertNewSiteCard(el) {
+        const container = document.getElementById("sitesContainer");
+        if (!container) return;
+        const addBtn = container.querySelector(".edit-add-btn");
+        if (addBtn) container.insertBefore(el, addBtn);
+        else container.appendChild(el);
+      }
+
+      function createSocialLinkEl({ type, href, icon, image }) {
+        const a = document.createElement("a");
+        a.className =
+          "social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative";
+        a.href = (href || "#").trim() || "#";
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        a.setAttribute("data-editable", "social");
+        a.setAttribute("data-id", "new-" + generateId());
+        a.setAttribute("data-type", type || "icon");
+
+        if ((type || "icon") === "image") {
+          const src = (image || "").trim();
+          a.innerHTML = `
+            <img alt="Social" class="w-5 h-5 rounded-full object-cover opacity-80" src="${src}" data-field="image" />
+            <button class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+          `;
+        } else {
+          a.innerHTML = `
+            <i class="${(icon || "fas fa-link").trim()}" data-field="icon"></i>
+            <button class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+          `;
+        }
+
+        if (isEditMode) {
+          a.classList.add("editable-active");
+          a.querySelectorAll(".edit-delete-btn").forEach((btn) => btn.classList.remove("hidden"));
+        }
+        return a;
+      }
+
+      function updateSocialLinkEl(target, { type, href, icon, image }) {
+        target.dataset.type = type || "icon";
+        target.setAttribute("href", (href || "#").trim() || "#");
+        target.target = "_blank";
+        target.rel = "noopener noreferrer";
+
+        const delBtn = target.querySelector(".edit-delete-btn");
+
+        if ((type || "icon") === "image") {
+          let img = target.querySelector("img");
+          if (!img) {
+            target.querySelector("i")?.remove();
+            img = document.createElement("img");
+            img.className = "w-5 h-5 rounded-full object-cover opacity-80";
+            img.setAttribute("data-field", "image");
+            img.alt = "Social";
+            target.insertBefore(img, delBtn || null);
+          }
+          img.src = (image || "").trim();
+          return;
+        }
+
+        let i = target.querySelector("i");
+        if (!i) {
+          target.querySelector("img")?.remove();
+          i = document.createElement("i");
+          i.setAttribute("data-field", "icon");
+          target.insertBefore(i, delBtn || null);
+        }
+        i.className = (icon || "fas fa-link").trim();
+      }
+
+      function insertNewSocialLink(el) {
+        const container = document.getElementById("socialLinksContainer");
+        if (!container) return;
+        const addBtn = container.querySelector(".edit-add-btn");
+        if (addBtn) container.insertBefore(el, addBtn);
+        else container.appendChild(el);
+      }
+
+      function handleItemModalSave(event) {
+        event?.preventDefault?.();
+
+        if (itemModalState.type === "site") {
+          const title =
+            document.getElementById("siteModalTitle")?.value?.trim() || "";
+          const description =
+            document.getElementById("siteModalDescription")?.value?.trim() || "";
+          const url =
+            document.getElementById("siteModalUrl")?.value?.trim() || "#";
+          const icon =
+            document.getElementById("siteModalIcon")?.value?.trim() ||
+            "fas fa-link";
+          const accent = !!document.getElementById("siteModalAccent")?.checked;
+
+          if (!title) {
+            showToast("请填写标题", "error");
+            return;
+          }
+
+          if (itemModalState.mode === "create") {
+            const el = createSiteCardEl({ title, description, url, icon, accent });
+            insertNewSiteCard(el);
+            showToast("已添加站点", "success");
+          } else if (itemModalState.target) {
+            updateSiteCardEl(itemModalState.target, {
+              title,
+              description,
+              url,
+              icon,
+              accent,
+            });
+            showToast("已更新站点", "success");
+          }
+
+          closeItemModal();
+          return;
+        }
+
+        if (itemModalState.type === "social") {
+          const type = document.getElementById("socialModalType")?.value || "icon";
+          const href =
+            document.getElementById("socialModalUrl")?.value?.trim() || "#";
+          const icon =
+            document.getElementById("socialModalIcon")?.value?.trim() ||
+            "fas fa-link";
+          const image =
+            document.getElementById("socialModalImage")?.value?.trim() || "";
+
+          if (itemModalState.mode === "create") {
+            const el = createSocialLinkEl({ type, href, icon, image });
+            insertNewSocialLink(el);
+            showToast("已添加社交链接", "success");
+          } else if (itemModalState.target) {
+            updateSocialLinkEl(itemModalState.target, { type, href, icon, image });
+            showToast("已更新社交链接", "success");
+          }
+
+          closeItemModal();
+        }
       }
 
       // ==============================
@@ -86,6 +414,7 @@
         // Keep the add button
         const addBtn = container.querySelector(".edit-add-btn");
         container.innerHTML = "";
+        if (addBtn) container.appendChild(addBtn);
 
         timeline.forEach((item, index) => {
           const isHighlight = index === 0; // First item is highlighted
@@ -115,9 +444,6 @@
 
           container.appendChild(div);
         });
-
-        // Re-add the button
-        if (addBtn) container.appendChild(addBtn);
       }
 
       function renderTags(tags) {
@@ -154,18 +480,25 @@
           div.className = `group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-${(index + 3) * 100} wobble-hover relative`;
           div.setAttribute("data-editable", "site");
           div.setAttribute("data-id", site.id || generateId());
-          div.setAttribute("data-url", site.url || "#");
+          div.setAttribute("data-url", site.url || site.href || "#");
+          div.setAttribute("role", "link");
+          div.setAttribute("tabindex", "0");
 
-          const iconClass = site.icon
-            ? site.icon.startsWith("fa-")
-              ? `fas ${site.icon}`
-              : `fas fa-${site.icon}`
+          const rawIcon = (site.icon || "").trim();
+          const iconClass = rawIcon
+            ? rawIcon.includes(" ")
+              ? rawIcon
+              : rawIcon.startsWith("fa-")
+                ? `fas ${rawIcon}`
+                : `fas fa-${rawIcon}`
             : "fas fa-link";
+
+          const accentClass = site.accent ? "accent" : "";
 
           div.innerHTML = `
             <div class="flex justify-between items-start mb-3">
               <h3 class="font-bold text-lg group-hover:opacity-80 transition-colors heading" data-field="title">${site.title}</h3>
-              <div class="site-card-icon w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]" data-field="icon">
+              <div class="site-card-icon ${accentClass} w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]" data-field="icon">
                 <i class="${iconClass}"></i>
               </div>
             </div>
@@ -190,7 +523,9 @@
           const a = document.createElement("a");
           a.className =
             "social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative";
-          a.href = link.href || "#";
+          a.href = link.href || link.url || "#";
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
           a.setAttribute("data-editable", "social");
           a.setAttribute("data-id", link.id || generateId());
           a.setAttribute("data-type", link.type || "icon");
@@ -214,35 +549,85 @@
       }
 
       window.addSocialLink = function () {
-        const container = document.getElementById("socialLinksContainer");
-        if (!container) return;
-
-        const addBtn = container.querySelector(".edit-add-btn");
-
-        const a = document.createElement("a");
-        a.className =
-          "social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative editable-active";
-        a.href = "#";
-        a.setAttribute("data-editable", "social");
-        a.setAttribute("data-id", "new-" + generateId());
-        a.setAttribute("data-type", "icon");
-
-        a.innerHTML = `
-          <i class="fas fa-link" data-field="icon"></i>
-          <button class="edit-delete-btn flex absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center" onclick="deleteEditableItem(this)">×</button>
-        `;
-
-        if (addBtn) {
-          container.insertBefore(a, addBtn);
-        } else {
-          container.appendChild(a);
-        }
+        openItemModal("social", { mode: "create" });
       };
+
+      function wireLinkInteractions() {
+        const sitesContainer = document.getElementById("sitesContainer");
+        const socialContainer = document.getElementById("socialLinksContainer");
+
+        // Ensure existing social anchors open in new tab in view mode
+        socialContainer?.querySelectorAll('a[data-editable="social"]').forEach((a) => {
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+        });
+
+        sitesContainer?.addEventListener("click", (e) => {
+          if (e.target.closest(".edit-delete-btn") || e.target.closest(".edit-add-btn")) {
+            return;
+          }
+
+          const card = e.target.closest('[data-editable="site"]');
+          if (!card) return;
+
+          if (isEditMode) {
+            openItemModal("site", { mode: "edit", target: card });
+            return;
+          }
+
+          navigateToUrl(card.dataset.url);
+        });
+
+        sitesContainer?.addEventListener("keydown", (e) => {
+          if (e.key !== "Enter") return;
+          const card = e.target.closest?.('[data-editable="site"]');
+          if (!card) return;
+
+          if (isEditMode) {
+            openItemModal("site", { mode: "edit", target: card });
+            return;
+          }
+
+          navigateToUrl(card.dataset.url);
+        });
+
+        socialContainer?.addEventListener("click", (e) => {
+          if (e.target.closest(".edit-delete-btn") || e.target.closest(".edit-add-btn")) {
+            return;
+          }
+
+          const link = e.target.closest('a[data-editable="social"]');
+          if (!link) return;
+
+          if (isEditMode) {
+            e.preventDefault();
+            openItemModal("social", { mode: "edit", target: link });
+            return;
+          }
+
+          const href = link.getAttribute("href") || "#";
+          if (!isValidUrlForNavigation(href)) {
+            e.preventDefault();
+            showToast("未设置链接", "info");
+          }
+        });
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key !== "Escape") return;
+          const modal = document.getElementById("itemModal");
+          if (modal && !modal.classList.contains("hidden")) {
+            closeItemModal();
+          }
+        });
+      }
 
       // Initialize once on page load
       document.addEventListener("DOMContentLoaded", () => {
+        wireLinkInteractions();
         if (isAuthenticated()) {
-          document.getElementById("authBtn")?.classList.add("authenticated");
+          const authBtn = document.getElementById("authBtn");
+          authBtn?.classList.add("authenticated");
+          if (authBtn) authBtn.innerHTML = '<i class="fas fa-unlock"></i>';
         }
         loadConfig();
       });
@@ -390,13 +775,12 @@
         document.getElementById("authBtn").innerHTML =
           '<i class="fas fa-unlock"></i>';
 
-        // Enable contenteditable on editable fields
+        // Enable contenteditable on editable fields (site/social edited via modal)
         document.querySelectorAll("[data-field]").forEach((el) => {
-          if (!el.closest(".pointer-events-none")) {
-            // Skip reflection elements
-            el.contentEditable = "true";
-            el.classList.add("editable-field");
-          }
+          if (el.closest(".pointer-events-none")) return; // Skip reflection elements
+          if (el.closest('[data-editable="site"],[data-editable="social"]')) return;
+          el.contentEditable = "true";
+          el.classList.add("editable-field");
         });
 
         // Show delete buttons
@@ -421,7 +805,7 @@
         document.body.classList.remove("edit-mode");
         document.getElementById("editToolbar").classList.add("hidden");
         document.getElementById("authBtn").innerHTML =
-          '<i class="fas fa-lock"></i>';
+          '<i class="fas fa-pen"></i>';
 
         // Disable contenteditable
         document.querySelectorAll("[data-field]").forEach((el) => {
@@ -485,14 +869,15 @@
           const titleEl = el.querySelector('[data-field="title"]');
           const descEl = el.querySelector('[data-field="description"]');
           const iconEl = el.querySelector('[data-field="icon"] i');
+          const iconWrap = el.querySelector('[data-field="icon"]');
           if (titleEl) {
             data.sites.push({
               id: el.dataset.id || generateId(),
               title: titleEl.textContent.trim(),
               description: descEl?.textContent.trim() || "",
-              icon: iconEl?.className.replace("fas ", "") || "fa-link",
+              icon: iconEl?.className || "fas fa-link",
               url: el.dataset.url || el.href || "#",
-              accent: el.classList.contains("site-accent"),
+              accent: !!iconWrap?.classList.contains("accent"),
             });
           }
         });
@@ -674,36 +1059,17 @@
           <button class="edit-delete-btn edit-control absolute -right-2 -top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center" onclick="deleteEditableItem(this)">×</button>
         `;
 
-        container.insertBefore(newItem, addBtn);
+        if (addBtn) {
+          container.insertBefore(newItem, addBtn.nextSibling);
+        } else {
+          container.prepend(newItem);
+        }
         newItem.classList.add("editable-active");
         showToast("已添加新事件", "success");
       };
 
       window.addSiteCard = function () {
-        const container = document.getElementById("sitesContainer");
-        const addBtn = container.querySelector(".edit-add-btn");
-        const newId = generateId();
-
-        const newCard = document.createElement("div");
-        newCard.className =
-          "group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 wobble-hover relative";
-        newCard.setAttribute("data-editable", "site");
-        newCard.setAttribute("data-id", newId);
-        newCard.setAttribute("data-url", "#");
-        newCard.innerHTML = `
-          <div class="flex justify-between items-start mb-3">
-            <h3 class="font-bold text-lg group-hover:opacity-80 transition-colors heading editable-field" data-field="title" contenteditable="true">新站点</h3>
-            <div class="site-card-icon w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]" data-field="icon">
-              <i class="fas fa-link"></i>
-            </div>
-          </div>
-          <p class="text-xs font-light editable-field" style="color: var(--text-muted)" data-field="description" contenteditable="true">站点描述</p>
-          <button class="edit-delete-btn edit-control absolute right-2 top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center" onclick="deleteEditableItem(this)">×</button>
-        `;
-
-        container.insertBefore(newCard, addBtn);
-        newCard.classList.add("editable-active");
-        showToast("已添加新站点", "success");
+        openItemModal("site", { mode: "create" });
       };
 
       window.addTag = function () {
@@ -723,6 +1089,10 @@
         newTag.classList.add("editable-active");
         showToast("已添加新标签", "success");
       };
+
+      // Expose modal handlers for inline HTML attributes
+      window.closeItemModal = closeItemModal;
+      window.handleItemModalSave = handleItemModalSave;
 
       function showToast(message, type = "info") {
         // Create toast element

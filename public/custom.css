@@ -548,9 +548,45 @@
         border-radius: 5px;
       }
 
+      /* Item Edit Modal (Site/Social) */
+      .item-modal {
+        backdrop-filter: blur(8px);
+      }
+      .item-modal .item-dialog {
+        max-width: 560px;
+        animation: fadeInUp 0.3s ease-out;
+      }
+      .item-modal input,
+      .item-modal textarea,
+      .item-modal select {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+      }
+      .item-modal input:focus,
+      .item-modal textarea:focus,
+      .item-modal select:focus {
+        border-color: rgba(255, 255, 255, 0.3);
+        outline: none;
+      }
+      :root.theme-handdrawn .item-modal input,
+      :root.theme-handdrawn .item-modal textarea,
+      :root.theme-handdrawn .item-modal select {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+      }
+
       /* Edit Toolbar */
       .edit-toolbar {
         animation: fadeInUp 0.3s ease-out;
+        top: 5rem;
+        right: 1.5rem;
+        left: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+        white-space: nowrap;
+        flex-wrap: nowrap;
       }
 
       /* Editable Elements */
@@ -609,4 +645,9 @@
       .image-upload-overlay i {
         font-size: 2rem;
         color: white;
+      }
+
+      /* Make site cards clickable in view mode */
+      #sitesContainer [data-editable="site"] {
+        cursor: pointer;
       }
