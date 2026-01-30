@@ -8,8 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <link href="/custom.css" rel="stylesheet" />
-    <link href="/assets/tailwind.css" rel="stylesheet" id="tailwind-local" />
+    <link href="/custom.css?v=20260130-9" rel="stylesheet" />
+    <link
+      href="/assets/tailwind.css?v=20260130-2"
+      rel="stylesheet"
+      id="tailwind-local"
+    />
     <script>
       // Fallback: if you forgot to build /assets/tailwind.css, load Tailwind CDN so the page is still usable.
       // When /assets/tailwind.css exists, this does nothing (no extra network request).
@@ -129,7 +133,10 @@
       id="itemModal"
       class="item-modal hidden fixed inset-0 z-[120] flex items-center justify-center"
     >
-      <div class="absolute inset-0 bg-black/60" onclick="closeItemModal()"></div>
+      <div
+        class="absolute inset-0 bg-black/60"
+        onclick="closeItemModal()"
+      ></div>
       <div class="item-dialog glass-panel relative p-7 rounded-2xl w-full mx-4">
         <div class="flex items-start justify-between gap-4 mb-5">
           <h3 id="itemModalTitle" class="text-xl font-bold heading">编辑</h3>
@@ -173,21 +180,340 @@
                 autocomplete="off"
               />
             </div>
-            <div>
-              <label class="block text-sm mb-1 opacity-80"
-                >图标（Font Awesome class）</label
-              >
-              <input
-                id="siteModalIcon"
-                class="w-full px-4 py-3 rounded-xl"
-                placeholder="例如：fas fa-cloud 或 fab fa-github"
-                autocomplete="off"
-              />
-              <div class="mt-2 flex items-center gap-3 opacity-90">
-                <span class="text-xs opacity-70">预览</span>
-                <span class="w-9 h-9 rounded-full flex items-center justify-center bg-white/10">
-                  <i id="siteModalIconPreview" class="fas fa-link"></i>
-                </span>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between gap-3">
+                <label class="block text-sm opacity-80">图标</label>
+                <select
+                  id="siteModalIconType"
+                  class="px-3 py-2 rounded-xl bg-white/5 border border-white/10"
+                >
+                  <option value="icon">图标</option>
+                  <option value="image">图片</option>
+                </select>
+              </div>
+
+              <div id="siteModalIconWrap" class="relative">
+                <div class="flex gap-2">
+                  <input
+                    id="siteModalIcon"
+                    class="flex-1 px-4 py-3 rounded-xl"
+                    placeholder="例如：fas fa-cloud / fab fa-github"
+                    autocomplete="off"
+                  />
+                  <button
+                    type="button"
+                    id="siteIconPickerBtn"
+                    class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors flex items-center gap-2"
+                    title="从列表选择图标"
+                  >
+                    <i id="siteModalIconPreview" class="fas fa-link"></i>
+                    <i class="fas fa-chevron-down text-xs opacity-60"></i>
+                  </button>
+                </div>
+
+                <!-- Icon Picker Popup -->
+                <div
+                  id="siteIconPickerPopup"
+                  class="hidden absolute left-0 right-0 top-full mt-2 p-3 rounded-xl glass-panel z-50 shadow-xl"
+                >
+                  <div class="flex flex-wrap gap-1" id="siteIconPickerGrid">
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-blog"
+                    title="博客"
+                  >
+                    <i class="fas fa-blog"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-cloud"
+                    title="云"
+                  >
+                    <i class="fas fa-cloud"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-folder"
+                    title="文件夹"
+                  >
+                    <i class="fas fa-folder"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-file"
+                    title="文件"
+                  >
+                    <i class="fas fa-file"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-home"
+                    title="首页"
+                  >
+                    <i class="fas fa-home"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-link"
+                    title="链接"
+                  >
+                    <i class="fas fa-link"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-book"
+                    title="书籍"
+                  >
+                    <i class="fas fa-book"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-code"
+                    title="代码"
+                  >
+                    <i class="fas fa-code"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-server"
+                    title="服务器"
+                  >
+                    <i class="fas fa-server"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-database"
+                    title="数据库"
+                  >
+                    <i class="fas fa-database"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-music"
+                    title="音乐"
+                  >
+                    <i class="fas fa-music"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-video"
+                    title="视频"
+                  >
+                    <i class="fas fa-video"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-image"
+                    title="图片"
+                  >
+                    <i class="fas fa-image"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-camera"
+                    title="相机"
+                  >
+                    <i class="fas fa-camera"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-gamepad"
+                    title="游戏"
+                  >
+                    <i class="fas fa-gamepad"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-shopping-cart"
+                    title="购物"
+                  >
+                    <i class="fas fa-shopping-cart"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-github"
+                    title="GitHub"
+                  >
+                    <i class="fab fa-github"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-twitter"
+                    title="Twitter"
+                  >
+                    <i class="fab fa-twitter"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-discord"
+                    title="Discord"
+                  >
+                    <i class="fab fa-discord"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-youtube"
+                    title="YouTube"
+                  >
+                    <i class="fab fa-youtube"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-bilibili"
+                    title="Bilibili"
+                  >
+                    <i class="fab fa-bilibili"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-weixin"
+                    title="微信"
+                  >
+                    <i class="fab fa-weixin"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-qq"
+                    title="QQ"
+                  >
+                    <i class="fab fa-qq"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-envelope"
+                    title="邮箱"
+                  >
+                    <i class="fas fa-envelope"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-pen"
+                    title="编辑"
+                  >
+                    <i class="fas fa-pen"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-star"
+                    title="星标"
+                  >
+                    <i class="fas fa-star"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-heart"
+                    title="喜欢"
+                  >
+                    <i class="fas fa-heart"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-tools"
+                    title="工具"
+                  >
+                    <i class="fas fa-tools"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-cog"
+                    title="设置"
+                  >
+                    <i class="fas fa-cog"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-globe"
+                    title="网站"
+                  >
+                    <i class="fas fa-globe"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-download"
+                    title="下载"
+                  >
+                    <i class="fas fa-download"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-rocket"
+                    title="火箭"
+                  >
+                    <i class="fas fa-rocket"></i>
+                  </button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="siteModalImageWrap" class="hidden space-y-2">
+                <label class="block text-sm mb-1 opacity-80">图片图标</label>
+                <div class="flex gap-2">
+                  <input
+                    id="siteModalImage"
+                    class="flex-1 px-4 py-3 rounded-xl"
+                    placeholder="https://example.com/icon.png 或 /api/images/xxx.png"
+                    autocomplete="off"
+                  />
+                  <button
+                    type="button"
+                    id="siteModalImageUploadBtn"
+                    class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+                    title="上传本地图片"
+                  >
+                    <i class="fas fa-upload"></i>
+                  </button>
+                  <input
+                    id="siteModalImageFile"
+                    type="file"
+                    class="hidden"
+                    accept="image/*"
+                  />
+                </div>
+                <div class="flex items-center gap-3 opacity-90">
+                  <span class="text-xs opacity-70">预览</span>
+                  <span
+                    class="w-9 h-9 rounded-full flex items-center justify-center bg-white/10 overflow-hidden"
+                  >
+                    <img
+                      id="siteModalImagePreview"
+                      alt="Site icon"
+                      class="w-6 h-6 object-cover rounded-full hidden"
+                      src=""
+                    />
+                  </span>
+                </div>
               </div>
             </div>
             <div class="flex items-center gap-3">
@@ -216,31 +542,154 @@
                 autocomplete="off"
               />
             </div>
-            <div id="socialModalIconWrap">
-              <label class="block text-sm mb-1 opacity-80"
-                >图标（Font Awesome class）</label
-              >
-              <input
-                id="socialModalIcon"
-                class="w-full px-4 py-3 rounded-xl"
-                placeholder="例如：fab fa-github"
-                autocomplete="off"
-              />
-              <div class="mt-2 flex items-center gap-3 opacity-90">
-                <span class="text-xs opacity-70">预览</span>
-                <span class="w-9 h-9 rounded-full flex items-center justify-center bg-white/10">
+            <div id="socialModalIconWrap" class="relative">
+              <label class="block text-sm mb-1 opacity-80">图标</label>
+              <div class="flex gap-2">
+                <input
+                  id="socialModalIcon"
+                  class="flex-1 px-4 py-3 rounded-xl"
+                  placeholder="例如：fab fa-github"
+                  autocomplete="off"
+                />
+                <button
+                  type="button"
+                  id="socialIconPickerBtn"
+                  class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors flex items-center gap-2"
+                  title="从列表选择图标"
+                >
                   <i id="socialModalIconPreview" class="fas fa-link"></i>
-                </span>
+                  <i class="fas fa-chevron-down text-xs opacity-60"></i>
+                </button>
               </div>
+
+              <div
+                id="socialIconPickerPopup"
+                class="hidden absolute left-0 right-0 top-full mt-2 p-3 rounded-xl glass-panel z-50 shadow-xl"
+              >
+                <div class="flex flex-wrap gap-1" id="socialIconPickerGrid">
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-github"
+                    title="GitHub"
+                  >
+                    <i class="fab fa-github"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-x-twitter"
+                    title="X / Twitter"
+                  >
+                    <i class="fab fa-x-twitter"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-telegram"
+                    title="Telegram"
+                  >
+                    <i class="fab fa-telegram"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-discord"
+                    title="Discord"
+                  >
+                    <i class="fab fa-discord"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-youtube"
+                    title="YouTube"
+                  >
+                    <i class="fab fa-youtube"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-bilibili"
+                    title="bilibili"
+                  >
+                    <i class="fab fa-bilibili"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-weixin"
+                    title="微信"
+                  >
+                    <i class="fab fa-weixin"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-weibo"
+                    title="微博"
+                  >
+                    <i class="fab fa-weibo"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fab fa-instagram"
+                    title="Instagram"
+                  >
+                    <i class="fab fa-instagram"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon-pick-btn w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center transition"
+                    data-icon="fas fa-link"
+                    title="链接"
+                  >
+                    <i class="fas fa-link"></i>
+                  </button>
+                </div>
+              </div>
+
             </div>
             <div id="socialModalImageWrap" class="hidden">
-              <label class="block text-sm mb-1 opacity-80">图片链接（URL）</label>
-              <input
-                id="socialModalImage"
-                class="w-full px-4 py-3 rounded-xl"
-                placeholder="https://example.com/icon.png"
-                autocomplete="off"
-              />
+              <label class="block text-sm mb-1 opacity-80"
+                >图片链接（URL）</label
+              >
+              <div class="flex gap-2">
+                <input
+                  id="socialModalImage"
+                  class="flex-1 px-4 py-3 rounded-xl"
+                  placeholder="https://example.com/icon.png 或 /api/images/xxx.png"
+                  autocomplete="off"
+                />
+                <button
+                  type="button"
+                  id="socialModalImageUploadBtn"
+                  class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+                  title="上传本地图片"
+                >
+                  <i class="fas fa-upload"></i>
+                </button>
+                <input
+                  id="socialModalImageFile"
+                  type="file"
+                  class="hidden"
+                  accept="image/*"
+                />
+              </div>
+              <div class="mt-2 flex items-center gap-3 opacity-90">
+                <span class="text-xs opacity-70">预览</span>
+                <span
+                  class="w-9 h-9 rounded-full flex items-center justify-center bg-white/10 overflow-hidden"
+                >
+                  <img
+                    id="socialModalImagePreview"
+                    alt="Social icon"
+                    class="w-6 h-6 object-cover rounded-full hidden"
+                    src=""
+                  />
+                </span>
+              </div>
             </div>
           </div>
 
@@ -266,7 +715,7 @@
     <!-- Edit Toolbar (shown when logged in) -->
     <div
       id="editToolbar"
-      class="edit-toolbar hidden fixed top-20 right-6 z-50 glass-panel rounded-full px-6 py-3 flex items-center gap-4 whitespace-nowrap shadow-lg backdrop-blur-md"
+      class="edit-toolbar hidden fixed top-6 right-36 z-50 glass-panel rounded-full px-4 py-2 flex items-center gap-3 whitespace-nowrap shadow-lg backdrop-blur-md"
     >
       <span class="text-sm opacity-80"
         ><i class="fas fa-edit mr-2"></i>编辑模式</span
@@ -323,9 +772,9 @@
       class="theme-toggle fixed top-6 right-6 z-50 p-3 rounded-full transition shadow-lg backdrop-blur-md flex items-center gap-2"
       title="切换明亮/暗色"
     >
-      <span class="theme-icon-dark"><i class="fas fa-sun"></i></span>
+      <span class="theme-icon-dark"><i class="fas fa-moon"></i></span>
       <span class="theme-icon-handdrawn hidden"
-        ><i class="fas fa-moon"></i
+        ><i class="fas fa-sun"></i
       ></span>
     </button>
 
@@ -803,7 +1252,6 @@
       Jovian © 2026
     </footer>
 
-        <script src="/assets/app.js" defer></script>
-
+    <script src="/assets/app.js?v=20260130-3" defer></script>
   </body>
 </html>

@@ -461,17 +461,24 @@
       }
       .fade-enter-active {
         animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        opacity: 0;
+        opacity: 1;
       }
       .fade-enter-active:hover {
         opacity: 1 !important;
       }
       .fade-left-active {
         animation: fadeInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        opacity: 0;
+        opacity: 1;
       }
       .fade-left-active:hover {
         opacity: 1 !important;
+      }
+
+      /* Modal icon picker scroll */
+      #siteIconPickerPopup,
+      #socialIconPickerPopup {
+        max-height: 240px;
+        overflow: auto;
       }
       .delay-100 {
         animation-delay: 100ms;
@@ -577,16 +584,109 @@
         border-radius: 8px;
       }
 
+      /* Icon Picker */
+      .icon-pick-btn {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.1);
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: all 0.15s ease;
+      }
+      .icon-pick-btn:hover {
+        background: rgba(255, 255, 255, 0.25) !important;
+        transform: scale(1.1);
+      }
+      .icon-pick-btn i {
+        pointer-events: none;
+      }
+      #siteIconPickerPopup {
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      #siteIconPickerGrid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      :root.theme-handdrawn .icon-pick-btn {
+        background: var(--bg-panel);
+        border: 1px solid var(--border-color);
+      }
+      :root.theme-handdrawn .icon-pick-btn:hover {
+        background: var(--bg-hover) !important;
+        border-color: var(--hd-secondary);
+      }
+
       /* Edit Toolbar */
       .edit-toolbar {
         animation: fadeInUp 0.3s ease-out;
-        top: 5rem;
-        right: 1.5rem;
+        position: fixed !important;
+        top: 1.5rem !important;
+        right: 9rem !important;
         left: auto !important;
         bottom: auto !important;
         transform: none !important;
         white-space: nowrap;
         flex-wrap: nowrap;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 9999px !important;
+        width: auto !important;
+        max-width: calc(100vw - 10rem);
+      }
+      /* Only show as inline-flex when NOT hidden */
+      .edit-toolbar:not(.hidden) {
+        display: inline-flex !important;
+      }
+      /* Ensure hidden class works */
+      .edit-toolbar.hidden {
+        display: none !important;
+      }
+      #editToolbar {
+        position: fixed !important;
+        top: 1.5rem !important;
+        right: 9rem !important;
+        left: auto !important;
+        bottom: auto !important;
+        transform: none !important;
+        width: auto !important;
+      }
+      #editToolbar.hidden {
+        display: none !important;
+      }
+      .edit-toolbar:hover,
+      #editToolbar:hover {
+        transform: none !important;
+      }
+      :root.theme-handdrawn .edit-toolbar,
+      :root.theme-handdrawn #editToolbar {
+        border-radius: 20px 5px 20px 5px / 5px 20px 5px 20px !important;
+        z-index: 60 !important;
+      }
+      :root.theme-handdrawn .edit-toolbar:hover,
+      :root.theme-handdrawn #editToolbar:hover {
+        transform: none !important;
+        background: var(--bg-panel) !important;
+      }
+      .edit-toolbar button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.375rem 0.75rem;
+        font-size: 0.8rem;
+        cursor: pointer;
+        position: relative;
+        z-index: 1;
+      }
+      .edit-toolbar span {
+        font-size: 0.8rem;
       }
 
       /* Editable Elements */

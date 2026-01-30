@@ -11,3 +11,4 @@ node_modules/
 public/assets/
 postcss.config.cjs
 src/styles.css
+.dev.vars

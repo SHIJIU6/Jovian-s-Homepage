@@ -34,6 +34,8 @@
         const modal = document.getElementById("itemModal");
         if (!modal) return;
         modal.classList.add("hidden");
+        document.getElementById("siteIconPickerPopup")?.classList.add("hidden");
+        document.getElementById("socialIconPickerPopup")?.classList.add("hidden");
         itemModalState = { type: null, mode: null, target: null };
       }
 
@@ -43,13 +45,25 @@
         previewEl.className = klass;
       }
 
+      function setImagePreview(previewEl, url) {
+        if (!previewEl) return;
+        const src = (url || "").trim();
+        previewEl.src = src;
+        previewEl.classList.toggle("hidden", !src);
+      }
+
       function fillSiteModal(target) {
         const titleInput = document.getElementById("siteModalTitle");
         const descInput = document.getElementById("siteModalDescription");
         const urlInput = document.getElementById("siteModalUrl");
         const iconInput = document.getElementById("siteModalIcon");
+        const iconTypeSelect = document.getElementById("siteModalIconType");
+        const imageInput = document.getElementById("siteModalImage");
+        const modalIconWrap = document.getElementById("siteModalIconWrap");
+        const modalImageWrap = document.getElementById("siteModalImageWrap");
         const accentInput = document.getElementById("siteModalAccent");
         const preview = document.getElementById("siteModalIconPreview");
+        const imagePreview = document.getElementById("siteModalImagePreview");
 
         const title =
           target?.querySelector('[data-field="title"]')?.textContent?.trim() ||
@@ -61,6 +75,9 @@
         const icon =
           target?.querySelector('[data-field="icon"] i')?.className?.trim() ||
           "fas fa-link";
+        const image =
+          target?.querySelector('[data-field="icon"] img')?.getAttribute?.("src") ||
+          "";
         const accent = !!target
           ?.querySelector('[data-field="icon"]')
           ?.classList?.contains("accent");
@@ -69,11 +86,30 @@
         if (descInput) descInput.value = description;
         if (urlInput) urlInput.value = url;
         if (iconInput) iconInput.value = icon;
+        if (imageInput) imageInput.value = image;
         if (accentInput) accentInput.checked = accent;
         setIconPreview(preview, icon);
+        setImagePreview(imagePreview, image);
 
         if (iconInput) {
           iconInput.oninput = () => setIconPreview(preview, iconInput.value);
+        }
+
+        const detectedType = (image || "").trim() ? "image" : "icon";
+        if (iconTypeSelect) iconTypeSelect.value = detectedType;
+        if (modalIconWrap && modalImageWrap) {
+          if ((iconTypeSelect?.value || detectedType) === "image") {
+            modalIconWrap.classList.add("hidden");
+            modalImageWrap.classList.remove("hidden");
+          } else {
+            modalImageWrap.classList.add("hidden");
+            modalIconWrap.classList.remove("hidden");
+          }
+        }
+
+        if (imageInput) {
+          imageInput.oninput = () =>
+            setImagePreview(imagePreview, imageInput.value);
         }
       }
 
@@ -85,6 +121,7 @@
         const iconWrap = document.getElementById("socialModalIconWrap");
         const imgWrap = document.getElementById("socialModalImageWrap");
         const preview = document.getElementById("socialModalIconPreview");
+        const imgPreview = document.getElementById("socialModalImagePreview");
 
         const type = target?.dataset?.type || "icon";
         const href = target?.getAttribute?.("href") || "#";
@@ -96,6 +133,7 @@
         if (urlInput) urlInput.value = href;
         if (iconInput) iconInput.value = icon;
         if (imgInput) imgInput.value = image;
+        setImagePreview(imgPreview, image);
 
         const applyType = () => {
           const current = typeSelect?.value || "icon";
@@ -115,6 +153,222 @@
         if (iconInput) {
           iconInput.oninput = () => setIconPreview(preview, iconInput.value);
         }
+
+        if (imgInput) {
+          imgInput.oninput = () => setImagePreview(imgPreview, imgInput.value);
+        }
+      }
+
+      async function uploadFileToR2(file, type) {
+        const token = getToken?.();
+        if (!token) {
+          throw new Error("NOT_AUTHENTICATED");
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("type", type);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok) {
+          throw new Error(data?.error || "UPLOAD_FAILED");
+        }
+        return data.url;
+      }
+
+      let itemModalUiWired = false;
+      function wireItemModalUi() {
+        if (itemModalUiWired) return;
+        itemModalUiWired = true;
+
+        const siteIconType = document.getElementById("siteModalIconType");
+        const siteIconWrap = document.getElementById("siteModalIconWrap");
+        const siteImageWrap = document.getElementById("siteModalImageWrap");
+        const sitePickerBtn = document.getElementById("siteIconPickerBtn");
+        const sitePickerPopup = document.getElementById("siteIconPickerPopup");
+        const sitePickerGrid = document.getElementById("siteIconPickerGrid");
+        const siteIconInput = document.getElementById("siteModalIcon");
+        const siteIconPreview = document.getElementById("siteModalIconPreview");
+        const siteImageInput = document.getElementById("siteModalImage");
+        const siteImagePreview = document.getElementById("siteModalImagePreview");
+        const siteImageUploadBtn = document.getElementById(
+          "siteModalImageUploadBtn",
+        );
+        const siteImageFile = document.getElementById("siteModalImageFile");
+
+        const applySiteIconType = () => {
+          const current = siteIconType?.value || "icon";
+          if (current === "image") {
+            siteIconWrap?.classList.add("hidden");
+            siteImageWrap?.classList.remove("hidden");
+          } else {
+            siteImageWrap?.classList.add("hidden");
+            siteIconWrap?.classList.remove("hidden");
+          }
+          sitePickerPopup?.classList.add("hidden");
+        };
+
+        siteIconType?.addEventListener("change", applySiteIconType);
+
+        sitePickerBtn?.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          sitePickerPopup?.classList.toggle("hidden");
+        });
+
+        sitePickerGrid?.addEventListener("click", (e) => {
+          const btn = e.target.closest?.(".icon-pick-btn");
+          if (!btn) return;
+          e.preventDefault();
+          const iconClass = btn.dataset.icon || "fas fa-link";
+          if (siteIconInput) siteIconInput.value = iconClass;
+          setIconPreview(siteIconPreview, iconClass);
+          if (siteIconType) siteIconType.value = "icon";
+          applySiteIconType();
+        });
+
+        siteImageUploadBtn?.addEventListener("click", (e) => {
+          e.preventDefault();
+          siteImageFile?.click();
+        });
+
+        siteImageFile?.addEventListener("change", async () => {
+          const file = siteImageFile.files?.[0];
+          if (!file) return;
+          try {
+            showToast("正在上传...", "info");
+            const url = await uploadFileToR2(file, "siteicon");
+            if (siteImageInput) siteImageInput.value = url;
+            setImagePreview(siteImagePreview, url);
+            if (siteIconType) siteIconType.value = "image";
+            applySiteIconType();
+            showToast("上传成功", "success");
+          } catch {
+            try {
+              const reader = new FileReader();
+              const dataUrl = await new Promise((resolve, reject) => {
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error("READ_FAILED"));
+                reader.readAsDataURL(file);
+              });
+              if (typeof dataUrl === "string") {
+                if (siteImageInput) siteImageInput.value = dataUrl;
+                setImagePreview(siteImagePreview, dataUrl);
+                if (siteIconType) siteIconType.value = "image";
+                applySiteIconType();
+                showToast("已使用本地图片预览（未上传）", "info");
+              }
+            } catch {
+              showToast("上传失败", "error");
+            }
+          } finally {
+            siteImageFile.value = "";
+          }
+        });
+
+        const socialType = document.getElementById("socialModalType");
+        const socialPickerBtn = document.getElementById("socialIconPickerBtn");
+        const socialPickerPopup = document.getElementById("socialIconPickerPopup");
+        const socialPickerGrid = document.getElementById("socialIconPickerGrid");
+        const socialIconInput = document.getElementById("socialModalIcon");
+        const socialIconPreview = document.getElementById("socialModalIconPreview");
+        const socialImageInput = document.getElementById("socialModalImage");
+        const socialImagePreview = document.getElementById("socialModalImagePreview");
+        const socialImageUploadBtn = document.getElementById(
+          "socialModalImageUploadBtn",
+        );
+        const socialImageFile = document.getElementById("socialModalImageFile");
+
+        socialPickerBtn?.addEventListener("click", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          socialPickerPopup?.classList.toggle("hidden");
+        });
+
+        socialPickerGrid?.addEventListener("click", (e) => {
+          const btn = e.target.closest?.(".icon-pick-btn");
+          if (!btn) return;
+          e.preventDefault();
+          const iconClass = btn.dataset.icon || "fas fa-link";
+          if (socialIconInput) socialIconInput.value = iconClass;
+          setIconPreview(socialIconPreview, iconClass);
+          if (socialType) {
+            socialType.value = "icon";
+            socialType.dispatchEvent(new Event("change"));
+          }
+          socialPickerPopup?.classList.add("hidden");
+        });
+
+        socialImageUploadBtn?.addEventListener("click", (e) => {
+          e.preventDefault();
+          socialImageFile?.click();
+        });
+
+        socialImageFile?.addEventListener("change", async () => {
+          const file = socialImageFile.files?.[0];
+          if (!file) return;
+          try {
+            showToast("正在上传...", "info");
+            const url = await uploadFileToR2(file, "socialicon");
+            if (socialImageInput) socialImageInput.value = url;
+            setImagePreview(socialImagePreview, url);
+            if (socialType) {
+              socialType.value = "image";
+              socialType.dispatchEvent(new Event("change"));
+            }
+            showToast("上传成功", "success");
+          } catch {
+            try {
+              const reader = new FileReader();
+              const dataUrl = await new Promise((resolve, reject) => {
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error("READ_FAILED"));
+                reader.readAsDataURL(file);
+              });
+              if (typeof dataUrl === "string") {
+                if (socialImageInput) socialImageInput.value = dataUrl;
+                setImagePreview(socialImagePreview, dataUrl);
+                if (socialType) {
+                  socialType.value = "image";
+                  socialType.dispatchEvent(new Event("change"));
+                }
+                showToast("已使用本地图片预览（未上传）", "info");
+              }
+            } catch {
+              showToast("上传失败", "error");
+            }
+          } finally {
+            socialImageFile.value = "";
+          }
+        });
+
+        document.addEventListener("click", (e) => {
+          const t = e.target;
+          if (
+            sitePickerBtn &&
+            sitePickerPopup &&
+            !sitePickerBtn.contains(t) &&
+            !sitePickerPopup.contains(t)
+          ) {
+            sitePickerPopup.classList.add("hidden");
+          }
+          if (
+            socialPickerBtn &&
+            socialPickerPopup &&
+            !socialPickerBtn.contains(t) &&
+            !socialPickerPopup.contains(t)
+          ) {
+            socialPickerPopup.classList.add("hidden");
+          }
+        });
       }
 
       function openItemModal(type, { mode, target } = {}) {
@@ -152,7 +406,7 @@
         modal.querySelector("input,textarea,select")?.focus();
       }
 
-      function createSiteCardEl({ title, description, url, icon, accent }) {
+      function createSiteCardEl({ title, description, url, icon, accent, iconType, image }) {
         const el = document.createElement("div");
         el.className =
           "group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 wobble-hover relative";
@@ -164,12 +418,19 @@
 
         const iconClass = (icon || "fas fa-link").trim() || "fas fa-link";
         const accentClass = accent ? "accent" : "";
+        const iconMode =
+          (iconType || "").trim() || ((image || "").trim() ? "image" : "icon");
+        const imageUrl = (image || "").trim();
+        const iconHtml =
+          iconMode === "image" && imageUrl
+            ? `<img alt="Site" class="w-6 h-6 rounded-full object-cover opacity-80" src="${imageUrl}" data-field="image" />`
+            : `<i class="${iconClass}"></i>`;
 
         el.innerHTML = `
           <div class="flex justify-between items-start mb-3">
             <h3 class="font-bold text-lg group-hover:opacity-80 transition-colors heading" data-field="title">${title}</h3>
             <div class="site-card-icon ${accentClass} w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]" data-field="icon">
-              <i class="${iconClass}"></i>
+              ${iconHtml}
             </div>
           </div>
           <p class="text-xs font-light" style="color: var(--text-muted)" data-field="description">${description || ""}</p>
@@ -183,19 +444,42 @@
         return el;
       }
 
-      function updateSiteCardEl(target, { title, description, url, icon, accent }) {
+      function updateSiteCardEl(target, { title, description, url, icon, accent, iconType, image }) {
         target.dataset.url = (url || "#").trim() || "#";
         target.setAttribute("role", "link");
         target.setAttribute("tabindex", "0");
 
         const titleEl = target.querySelector('[data-field="title"]');
         const descEl = target.querySelector('[data-field="description"]');
-        const iconEl = target.querySelector('[data-field="icon"] i');
         const iconWrap = target.querySelector('[data-field="icon"]');
+        const iconMode =
+          (iconType || "").trim() || ((image || "").trim() ? "image" : "icon");
+        const imageUrl = (image || "").trim();
 
         if (titleEl) titleEl.textContent = title;
         if (descEl) descEl.textContent = description || "";
-        if (iconEl) iconEl.className = (icon || "fas fa-link").trim();
+        if (iconWrap) {
+          if (iconMode === "image" && imageUrl) {
+            iconWrap.querySelector("i")?.remove();
+            let img = iconWrap.querySelector("img");
+            if (!img) {
+              img = document.createElement("img");
+              img.className = "w-6 h-6 rounded-full object-cover opacity-80";
+              img.setAttribute("data-field", "image");
+              img.alt = "Site";
+              iconWrap.appendChild(img);
+            }
+            img.src = imageUrl;
+          } else {
+            iconWrap.querySelector("img")?.remove();
+            let iconEl = iconWrap.querySelector("i");
+            if (!iconEl) {
+              iconEl = document.createElement("i");
+              iconWrap.appendChild(iconEl);
+            }
+            iconEl.className = (icon || "fas fa-link").trim();
+          }
+        }
         if (iconWrap) {
           if (accent) iconWrap.classList.add("accent");
           else iconWrap.classList.remove("accent");
@@ -291,9 +575,13 @@
             document.getElementById("siteModalDescription")?.value?.trim() || "";
           const url =
             document.getElementById("siteModalUrl")?.value?.trim() || "#";
+          const iconType =
+            document.getElementById("siteModalIconType")?.value || "icon";
           const icon =
             document.getElementById("siteModalIcon")?.value?.trim() ||
             "fas fa-link";
+          const image =
+            document.getElementById("siteModalImage")?.value?.trim() || "";
           const accent = !!document.getElementById("siteModalAccent")?.checked;
 
           if (!title) {
@@ -302,7 +590,7 @@
           }
 
           if (itemModalState.mode === "create") {
-            const el = createSiteCardEl({ title, description, url, icon, accent });
+            const el = createSiteCardEl({ title, description, url, icon, accent, iconType, image });
             insertNewSiteCard(el);
             showToast("已添加站点", "success");
           } else if (itemModalState.target) {
@@ -311,6 +599,8 @@
               description,
               url,
               icon,
+              iconType,
+              image,
               accent,
             });
             showToast("已更新站点", "success");
@@ -484,6 +774,11 @@
           div.setAttribute("role", "link");
           div.setAttribute("tabindex", "0");
 
+          const iconMode =
+            (site.iconType || "").trim() ||
+            ((site.image || "").trim() ? "image" : "icon");
+          const imageUrl = (site.image || "").trim();
+
           const rawIcon = (site.icon || "").trim();
           const iconClass = rawIcon
             ? rawIcon.includes(" ")
@@ -493,13 +788,18 @@
                 : `fas fa-${rawIcon}`
             : "fas fa-link";
 
+          const iconHtml =
+            iconMode === "image" && imageUrl
+              ? `<img alt="Site" class="w-6 h-6 rounded-full object-cover opacity-80" src="${imageUrl}" data-field="image" />`
+              : `<i class="${iconClass}"></i>`;
+
           const accentClass = site.accent ? "accent" : "";
 
           div.innerHTML = `
             <div class="flex justify-between items-start mb-3">
               <h3 class="font-bold text-lg group-hover:opacity-80 transition-colors heading" data-field="title">${site.title}</h3>
               <div class="site-card-icon ${accentClass} w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]" data-field="icon">
-                <i class="${iconClass}"></i>
+                ${iconHtml}
               </div>
             </div>
             <p class="text-xs font-light" style="color: var(--text-muted)" data-field="description">${site.description || ""}</p>
@@ -624,6 +924,11 @@
       // Initialize once on page load
       document.addEventListener("DOMContentLoaded", () => {
         wireLinkInteractions();
+        wireItemModalUi();
+
+        // Always start with toolbar hidden; only show after entering edit mode.
+        document.getElementById("editToolbar")?.classList.add("hidden");
+
         if (isAuthenticated()) {
           const authBtn = document.getElementById("authBtn");
           authBtn?.classList.add("authenticated");
@@ -869,13 +1174,18 @@
           const titleEl = el.querySelector('[data-field="title"]');
           const descEl = el.querySelector('[data-field="description"]');
           const iconEl = el.querySelector('[data-field="icon"] i');
+          const imageEl = el.querySelector('[data-field="icon"] img');
           const iconWrap = el.querySelector('[data-field="icon"]');
           if (titleEl) {
+            const image = imageEl?.getAttribute?.("src") || "";
+            const iconType = (image || "").trim() ? "image" : "icon";
             data.sites.push({
               id: el.dataset.id || generateId(),
               title: titleEl.textContent.trim(),
               description: descEl?.textContent.trim() || "",
               icon: iconEl?.className || "fas fa-link",
+              image,
+              iconType,
               url: el.dataset.url || el.href || "#",
               accent: !!iconWrap?.classList.contains("accent"),
             });
@@ -884,7 +1194,8 @@
 
         // Collect tags
         document.querySelectorAll('[data-editable="tag"]').forEach((el) => {
-          const text = el.textContent.trim();
+          const tagEl = el.querySelector('[data-field="tag"]');
+          const text = tagEl?.textContent.trim();
           if (text) {
             data.tags.push(text);
           }
