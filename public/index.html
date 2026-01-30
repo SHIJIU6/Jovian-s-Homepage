@@ -1,0 +1,1966 @@
+<!doctype html>
+<html class="dark" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Javian Personal Profile</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <!-- Dark Theme Font: Poppins -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Hand-drawn Theme Fonts: Kalam, Patrick Hand -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Hand-drawn Theme Font: LXGW WenKai (Chinese) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-screen-web/style.css"
+      rel="stylesheet"
+    />
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#ffffff",
+              "primary-dark": "#e4e4e7",
+              "accent-green": "#10b981",
+              "glass-border": "rgba(255, 255, 255, 0.08)",
+              "glass-bg": "rgba(24, 24, 27, 0.4)",
+              "glass-bg-hover": "rgba(39, 39, 42, 0.5)",
+            },
+            fontFamily: {
+              display: ["Poppins", "sans-serif"],
+              body: ["Poppins", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.75rem",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      /* ==============================
+         CSS Custom Properties (Theme Variables)
+         ============================== */
+      :root {
+        /* Dark Glassmorphism Theme (Default) */
+        --bg-primary: #09090b;
+        --bg-overlay: rgba(15, 12, 26, 0.7);
+        --bg-panel: rgba(39, 39, 42, 0.4);
+        --bg-panel-hover: rgba(63, 63, 70, 0.5);
+        --text-primary: #e4e4e7;
+        --text-secondary: #a1a1aa;
+        --text-muted: #71717a;
+        --border-color: rgba(255, 255, 255, 0.08);
+        --border-hover: rgba(255, 255, 255, 0.2);
+        --accent-color: #ffffff;
+        --accent-glow: rgba(255, 255, 255, 0.5);
+        --shadow-color: rgba(0, 0, 0, 0.5);
+        --timeline-gradient: linear-gradient(
+          to bottom,
+          transparent,
+          rgba(236, 72, 153, 0.5),
+          rgba(139, 92, 246, 0.5),
+          transparent
+        );
+        --font-primary: "Poppins", sans-serif;
+        --font-display: "Poppins", sans-serif;
+        --border-radius: 0.75rem;
+        --panel-blur: blur(24px);
+        --transition-speed: 0.4s;
+
+        /* Handdrawn specific (not used in dark theme) */
+        --hd-wobbly: 0.75rem;
+        --hd-shadow: none;
+      }
+
+      /* Hand-drawn Theme */
+      :root.theme-handdrawn {
+        --bg-primary: #fdfbf7;
+        --bg-overlay: transparent;
+        --bg-panel: #ffffff;
+        --bg-panel-hover: #ffffff;
+        --text-primary: #2d2d2d;
+        --text-secondary: #4a4a4a;
+        --text-muted: #6b6b6b;
+        --border-color: #2d2d2d;
+        --border-hover: #2d5da1;
+        --accent-color: #ff4d4d;
+        --accent-glow: rgba(255, 77, 77, 0.3);
+        --shadow-color: #2d2d2d;
+        --timeline-gradient: linear-gradient(
+          to bottom,
+          transparent,
+          #2d2d2d,
+          transparent
+        );
+        --font-primary:
+          "Patrick Hand", "LXGW WenKai Screen", "Kaiti SC", cursive, sans-serif;
+        --font-display:
+          "Kalam", "LXGW WenKai Screen", "Kaiti SC", cursive, sans-serif;
+        --border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        --panel-blur: none;
+        --transition-speed: 0.3s;
+
+        --hd-wobbly: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        --hd-shadow: 4px 4px 0px 0px #2d2d2d;
+        --hd-shadow-hover: 2px 2px 0px 0px #2d2d2d;
+        --hd-highlight: #fff9c4;
+        --hd-secondary: #2d5da1;
+        --hd-muted: #e5e0d8;
+      }
+
+      /* ==============================
+         Global Base Styles
+         ============================== */
+      * {
+        transition:
+          background-color var(--transition-speed) ease,
+          color var(--transition-speed) ease,
+          border-color var(--transition-speed) ease,
+          box-shadow var(--transition-speed) ease,
+          transform 0.2s ease;
+      }
+
+      body {
+        font-family: var(--font-primary);
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        overflow-x: hidden;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      .heading {
+        font-family: var(--font-display);
+      }
+
+      /* Dark theme background */
+      .theme-bg-dark {
+        display: block;
+      }
+      .theme-bg-handdrawn {
+        display: none;
+      }
+      :root.theme-handdrawn .theme-bg-dark {
+        display: none;
+      }
+      :root.theme-handdrawn .theme-bg-handdrawn {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: -10;
+        background-color: var(--bg-primary);
+        background-image: radial-gradient(var(--hd-muted) 1px, transparent 1px);
+        background-size: 24px 24px;
+      }
+
+      /* ==============================
+         Global Keyframes
+         ============================== */
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+      @keyframes float-delayed {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-7px);
+        }
+      }
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translate3d(0, 40px, 0);
+        }
+        to {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+        }
+      }
+      @keyframes fadeInLeft {
+        from {
+          opacity: 0;
+          transform: translate3d(-30px, 0, 0);
+        }
+        to {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+        }
+      }
+      @keyframes pulse-glow {
+        0%,
+        100% {
+          box-shadow: 0 0 10px var(--accent-glow);
+        }
+        50% {
+          box-shadow: 0 0 20px var(--accent-glow);
+        }
+      }
+      @keyframes textShine {
+        to {
+          background-position: 200% center;
+        }
+      }
+      @keyframes wobble {
+        0%,
+        100% {
+          transform: rotate(-1deg);
+        }
+        50% {
+          transform: rotate(1deg);
+        }
+      }
+
+      /* ==============================
+         Glass Panel / Card Styles
+         ============================== */
+      .glass-panel {
+        backdrop-filter: var(--panel-blur);
+        -webkit-backdrop-filter: var(--panel-blur);
+        background: var(--bg-panel);
+        border: 1px solid var(--border-color);
+        box-shadow:
+          0 4px 6px -1px var(--shadow-color),
+          0 2px 4px -1px var(--shadow-color),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        transition:
+          background-color var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1),
+          border-color var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1),
+          box-shadow var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1),
+          transform var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Dark theme specific glass effects */
+      .glass-panel::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          to right,
+          transparent,
+          rgba(255, 255, 255, 0.03),
+          transparent
+        );
+        transform: skewX(-25deg);
+        transition: 0.5s;
+        pointer-events: none;
+      }
+      .glass-panel:hover {
+        background: var(--bg-panel-hover);
+        border-color: var(--border-hover);
+        transform: translateY(-4px);
+        box-shadow:
+          0 20px 25px -5px var(--shadow-color),
+          0 8px 10px -6px var(--shadow-color),
+          inset 0 0 20px rgba(255, 255, 255, 0.02);
+      }
+      .glass-panel:hover::before {
+        left: 200%;
+        transition: 0.8s;
+      }
+
+      /* Hand-drawn theme panel overrides */
+      :root.theme-handdrawn .glass-panel {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        border-radius: 5px 25px 3px 15px / 20px 5px 20px 5px;
+        box-shadow: var(--hd-shadow);
+        overflow: visible;
+        position: relative;
+      }
+      :root.theme-handdrawn .glass-panel::before {
+        display: none;
+      }
+      :root.theme-handdrawn .glass-panel:hover {
+        background: var(--bg-panel) !important;
+        transform: translateY(-2px) rotate(-0.5deg);
+        box-shadow: 6px 6px 0px 0px #2d2d2d;
+        border-color: var(--hd-secondary);
+        z-index: 10;
+      }
+
+      /* ==============================
+         Text Styles
+         ============================== */
+      .text-gradient {
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-image: linear-gradient(to right, #ffffff, #a1a1aa, #ffffff);
+        background-size: 200% auto;
+        animation: textShine 6s linear infinite;
+      }
+      :root.theme-handdrawn .text-gradient {
+        background-image: linear-gradient(to right, #2d2d2d, #2d5da1, #2d2d2d);
+      }
+
+      /* ==============================
+         Timeline Styles
+         ============================== */
+      .timeline-line {
+        background: var(--timeline-gradient);
+      }
+      :root.theme-handdrawn .timeline-line {
+        background: none;
+        border-left: 2px dashed var(--hd-muted);
+      }
+
+      .timeline-dot {
+        background-color: var(--accent-color);
+        box-shadow: 0 0 15px var(--accent-glow);
+      }
+      :root.theme-handdrawn .timeline-dot {
+        background-color: var(--accent-color);
+        border: 2px solid var(--border-color);
+        box-shadow: var(--hd-shadow-hover);
+      }
+
+      /* ==============================
+         Avatar Styles
+         ============================== */
+      .avatar-container img {
+        border: 6px solid rgba(255, 255, 255, 0.05);
+        border-radius: 50%;
+      }
+      :root.theme-handdrawn .avatar-container img {
+        border: 3px solid var(--border-color);
+        border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+        box-shadow: var(--hd-shadow);
+      }
+      :root.theme-handdrawn .avatar-glow {
+        display: none;
+      }
+
+      /* ==============================
+         Social Icons
+         ============================== */
+      .social-icon {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #94a3b8;
+      }
+      .social-icon:hover {
+        background: white;
+        color: black;
+        border-color: white;
+      }
+      :root.theme-handdrawn .social-icon {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 20px 5px 20px 5px / 5px 20px 5px 20px;
+        box-shadow: var(--hd-shadow-hover);
+      }
+      :root.theme-handdrawn .social-icon:hover {
+        background: var(--hd-highlight);
+        transform: rotate(-3deg) translateY(-2px);
+        box-shadow: var(--hd-shadow);
+      }
+
+      /* ==============================
+         Tags
+         ============================== */
+      .tag {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        color: #cbd5e1;
+      }
+      .tag:hover {
+        background: white;
+        color: black;
+        border-color: white;
+      }
+      :root.theme-handdrawn .tag {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 20px 5px 20px 5px / 5px 20px 5px 20px;
+        box-shadow: var(--hd-shadow-hover);
+      }
+      :root.theme-handdrawn .tag:hover {
+        background: var(--hd-highlight);
+        transform: rotate(-2deg);
+        box-shadow: var(--hd-shadow);
+      }
+
+      /* ==============================
+         Site Cards
+         ============================== */
+      .site-card-icon {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+      }
+      :root.theme-handdrawn .site-card-icon {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        color: var(--text-primary);
+        border-radius: 50%;
+        box-shadow: var(--hd-shadow-hover);
+      }
+      :root.theme-handdrawn .site-card-icon.accent {
+        background: var(--hd-highlight);
+        border-color: var(--border-color);
+        color: var(--text-primary);
+      }
+
+      /* ==============================
+         Theme Toggle Button
+         ============================== */
+      .theme-toggle {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      :root.theme-handdrawn .theme-toggle {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        color: var(--text-primary);
+        box-shadow: var(--hd-shadow-hover);
+        border-radius: 20px 5px 20px 5px / 5px 20px 5px 20px;
+      }
+      :root.theme-handdrawn .theme-toggle:hover {
+        background: var(--hd-highlight);
+        transform: rotate(-3deg);
+        box-shadow: var(--hd-shadow);
+      }
+
+      /* ==============================
+         Footer
+         ============================== */
+      footer {
+        border-color: var(--border-color);
+        color: var(--text-muted);
+      }
+      :root.theme-handdrawn footer {
+        border-top: 2px dashed var(--hd-muted);
+        background: transparent;
+      }
+
+      /* ==============================
+         Scrollbar
+         ============================== */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(to bottom, #ec4899, #8b5cf6);
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #db2777;
+      }
+      :root.theme-handdrawn::-webkit-scrollbar-track {
+        background: var(--bg-primary);
+        border-left: 1px solid var(--border-color);
+      }
+      :root.theme-handdrawn::-webkit-scrollbar-thumb {
+        background: var(--hd-muted);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+      }
+      :root.theme-handdrawn::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+      }
+
+      /* ==============================
+         Animation Utilities
+         ============================== */
+      .animate-float {
+        animation: float 6s ease-in-out infinite;
+      }
+      .animate-float-delayed {
+        animation: float-delayed 7s ease-in-out infinite;
+      }
+      .animate-pulse-glow {
+        animation: pulse-glow 3s infinite;
+      }
+      .fade-enter-active {
+        animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+      }
+      .fade-enter-active:hover {
+        opacity: 1 !important;
+      }
+      .fade-left-active {
+        animation: fadeInLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+      }
+      .fade-left-active:hover {
+        opacity: 1 !important;
+      }
+      .delay-100 {
+        animation-delay: 100ms;
+      }
+      .delay-200 {
+        animation-delay: 200ms;
+      }
+      .delay-300 {
+        animation-delay: 300ms;
+      }
+      .delay-400 {
+        animation-delay: 400ms;
+      }
+      .delay-500 {
+        animation-delay: 500ms;
+      }
+      .delay-600 {
+        animation-delay: 600ms;
+      }
+
+      /* Hand-drawn theme wobble on hover */
+      :root.theme-handdrawn .wobble-hover:hover {
+        animation: wobble 0.5s ease-in-out;
+      }
+
+      /* ==============================
+         Edit Mode Styles
+         ============================== */
+
+      /* Auth Button */
+      .auth-btn {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+      .auth-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+      .auth-btn.authenticated {
+        color: #10b981;
+        border-color: #10b981;
+      }
+      :root.theme-handdrawn .auth-btn {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        color: var(--text-primary);
+        box-shadow: var(--hd-shadow-hover);
+        border-radius: 20px 5px 20px 5px / 5px 20px 5px 20px;
+      }
+      :root.theme-handdrawn .auth-btn.authenticated {
+        border-color: var(--accent-color);
+      }
+
+      /* Auth Modal */
+      .auth-modal {
+        backdrop-filter: blur(8px);
+      }
+      .auth-modal .auth-dialog {
+        max-width: 360px;
+        animation: fadeInUp 0.3s ease-out;
+      }
+      .auth-modal input {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: var(--text-primary);
+      }
+      .auth-modal input:focus {
+        border-color: rgba(255, 255, 255, 0.3);
+        outline: none;
+      }
+      :root.theme-handdrawn .auth-modal input {
+        background: var(--bg-panel);
+        border: 2px solid var(--border-color);
+        border-radius: 5px;
+      }
+
+      /* Edit Toolbar */
+      .edit-toolbar {
+        animation: fadeInUp 0.3s ease-out;
+      }
+
+      /* Editable Elements */
+      .edit-mode [data-editable] {
+        position: relative;
+      }
+      .edit-mode .editable-active {
+        outline: 2px dashed rgba(16, 185, 129, 0.5);
+        outline-offset: 4px;
+      }
+      .edit-mode .editable-field:focus {
+        outline: none;
+        background: rgba(16, 185, 129, 0.1);
+        border-radius: 4px;
+      }
+      .edit-mode .edit-control {
+        position: absolute;
+        z-index: 20;
+      }
+      .edit-delete-btn {
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .edit-delete-btn:hover {
+        transform: scale(1.1);
+        background: #ef4444 !important;
+      }
+      .edit-add-btn {
+        cursor: pointer;
+        background: rgba(16, 185, 129, 0.2);
+        border: 2px dashed rgba(16, 185, 129, 0.5);
+        color: #10b981;
+        transition: all 0.2s ease;
+      }
+      .edit-add-btn:hover {
+        background: rgba(16, 185, 129, 0.3);
+        border-color: #10b981;
+      }
+
+      /* Image Upload Overlay */
+      .image-upload-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        cursor: pointer;
+        border-radius: inherit;
+      }
+      .edit-mode .image-upload-overlay:hover {
+        opacity: 1;
+      }
+      .image-upload-overlay i {
+        font-size: 2rem;
+        color: white;
+      }
+    </style>
+  </head>
+  <body
+    class="min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-white"
+  >
+    <!-- Background Layers -->
+    <div class="theme-bg-dark fixed inset-0 -z-10">
+      <img
+        alt="Background"
+        class="w-full h-full object-cover opacity-60"
+        src="Background.webp"
+      />
+      <div class="absolute inset-0 bg-[#0f0c1a]/70 backdrop-blur-[2px]"></div>
+      <div
+        class="absolute top-[-20%] left-[50%] -translate-x-1/2 w-[800px] h-[600px] bg-white/5 rounded-full blur-[120px] pointer-events-none"
+      ></div>
+    </div>
+    <div class="theme-bg-handdrawn"></div>
+
+    <!-- Auth Modal -->
+    <div
+      id="authModal"
+      class="auth-modal hidden fixed inset-0 z-[100] flex items-center justify-center"
+    >
+      <div
+        class="absolute inset-0 bg-black/60"
+        onclick="closeAuthModal()"
+      ></div>
+      <div class="auth-dialog glass-panel relative p-8 rounded-2xl w-full mx-4">
+        <h3 class="text-xl font-bold mb-6 heading">身份验证</h3>
+        <input
+          id="authPassword"
+          type="password"
+          placeholder="请输入管理密码"
+          class="w-full px-4 py-3 rounded-xl mb-4"
+          onkeydown="if (event.key === 'Enter') handleLogin();"
+        />
+        <div id="authError" class="text-red-400 text-sm mb-4 hidden">
+          密码错误，请重试
+        </div>
+        <div class="flex gap-3">
+          <button
+            onclick="closeAuthModal()"
+            class="flex-1 px-4 py-2 rounded-xl border border-white/10 hover:bg-white/5 transition"
+          >
+            取消
+          </button>
+          <button
+            onclick="handleLogin()"
+            class="flex-1 px-4 py-2 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition"
+          >
+            确认
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Toolbar (shown when logged in) -->
+    <div
+      id="editToolbar"
+      class="edit-toolbar hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-50 glass-panel rounded-full px-6 py-3 flex items-center gap-4"
+    >
+      <span class="text-sm opacity-80"
+        ><i class="fas fa-edit mr-2"></i>编辑模式</span
+      >
+      <button
+        onclick="handleSave()"
+        class="px-4 py-1.5 rounded-lg bg-green-500/20 text-green-400 text-sm hover:bg-green-500/30 transition flex items-center gap-1"
+      >
+        <i class="fas fa-save"></i><span>保存</span>
+      </button>
+      <button
+        onclick="handleCancelEdit()"
+        class="px-4 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-sm hover:bg-red-500/30 transition flex items-center gap-1"
+      >
+        <i class="fas fa-times"></i><span>取消</span>
+      </button>
+      <button
+        onclick="handleLogout()"
+        class="px-4 py-1.5 rounded-lg bg-white/10 text-sm hover:bg-white/20 transition flex items-center gap-1"
+      >
+        <i class="fas fa-sign-out-alt"></i><span>退出</span>
+      </button>
+    </div>
+
+    <!-- Hidden File Inputs -->
+    <input
+      type="file"
+      id="avatarUpload"
+      class="hidden"
+      accept="image/*"
+      onchange="handleImageUpload(this, 'avatar')"
+    />
+    <input
+      type="file"
+      id="backgroundUpload"
+      class="hidden"
+      accept="image/*"
+      onchange="handleImageUpload(this, 'background')"
+    />
+
+    <!-- Auth Button -->
+    <button
+      id="authBtn"
+      class="auth-btn fixed top-6 right-20 z-50 p-3 rounded-full transition shadow-lg backdrop-blur-md"
+      title="管理登录"
+      onclick="openAuthModal()"
+    >
+      <i class="fas fa-lock"></i>
+    </button>
+
+    <!-- Theme Toggle Button -->
+    <button
+      id="themeToggle"
+      class="theme-toggle fixed top-6 right-6 z-50 p-3 rounded-full transition shadow-lg backdrop-blur-md flex items-center gap-2"
+      title="Toggle Theme"
+    >
+      <span class="theme-icon-dark"><i class="fas fa-moon"></i></span>
+      <span class="theme-icon-handdrawn hidden"
+        ><i class="fas fa-pencil-alt"></i
+      ></span>
+    </button>
+
+    <div
+      class="relative z-10 max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-16"
+    >
+      <!-- Timeline Sidebar -->
+      <aside
+        class="hidden xl:block w-48 flex-shrink-0 pt-32 relative"
+        id="timelineContainer"
+      >
+        <div class="absolute left-4 top-0 bottom-0 w-[2px] timeline-line"></div>
+        <div class="space-y-16 pl-10 relative" id="timelineItems">
+          <!-- Timeline Item 1 (Highlight) -->
+          <div
+            class="relative group fade-left-active delay-100"
+            data-editable="timeline"
+            data-id="1"
+          >
+            <div
+              class="timeline-dot absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full ring-4 ring-black/20 z-10 animate-pulse-glow"
+            ></div>
+            <div
+              class="text-xs font-bold mb-1 tracking-wider opacity-80"
+              style="color: var(--accent-color)"
+              data-field="date"
+            >
+              2025.3
+            </div>
+            <h4
+              class="text-sm font-semibold group-hover:opacity-80 transition-colors heading"
+              data-field="title"
+            >
+              28岁啦
+            </h4>
+            <button
+              class="edit-delete-btn edit-control hidden absolute -right-2 -top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+              onclick="deleteEditableItem(this)"
+            >
+              ×
+            </button>
+          </div>
+          <!-- Timeline Item 2 -->
+          <div
+            class="relative group fade-left-active delay-200"
+            data-editable="timeline"
+            data-id="2"
+          >
+            <div
+              class="absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full bg-slate-500 group-hover:bg-white transition-colors z-10 ring-4 ring-black/20"
+            ></div>
+            <div
+              class="text-xs mb-1 tracking-wider"
+              style="color: var(--text-muted)"
+              data-field="date"
+            >
+              2025.1
+            </div>
+            <h4
+              class="text-sm font-semibold group-hover:opacity-80 transition-colors heading"
+              data-field="title"
+            >
+              参演《星星闪耀的夜晚》
+            </h4>
+            <button
+              class="edit-delete-btn edit-control hidden absolute -right-2 -top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+              onclick="deleteEditableItem(this)"
+            >
+              ×
+            </button>
+          </div>
+          <!-- Timeline Item 3 -->
+          <div
+            class="relative group fade-left-active delay-300"
+            data-editable="timeline"
+            data-id="3"
+          >
+            <div
+              class="absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full bg-slate-500 group-hover:bg-white transition-colors z-10 ring-4 ring-black/20"
+            ></div>
+            <div
+              class="text-xs mb-1 tracking-wider"
+              style="color: var(--text-muted)"
+              data-field="date"
+            >
+              2024.3
+            </div>
+            <h4
+              class="text-sm font-semibold group-hover:opacity-80 transition-colors heading"
+              data-field="title"
+            >
+              参演《7人的复活》
+            </h4>
+            <button
+              class="edit-delete-btn edit-control hidden absolute -right-2 -top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+              onclick="deleteEditableItem(this)"
+            >
+              ×
+            </button>
+          </div>
+          <!-- Timeline Item 4 -->
+          <div
+            class="relative group fade-left-active delay-400"
+            data-editable="timeline"
+            data-id="4"
+          >
+            <div
+              class="absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full bg-slate-500 group-hover:bg-white transition-colors z-10 ring-4 ring-black/20"
+            ></div>
+            <div
+              class="text-xs mb-1 tracking-wider"
+              style="color: var(--text-muted)"
+              data-field="date"
+            >
+              2021.3
+            </div>
+            <h4
+              class="text-sm font-semibold group-hover:opacity-80 transition-colors heading"
+              data-field="title"
+            >
+              参演《今天开始契约恋爱》
+            </h4>
+            <button
+              class="edit-delete-btn edit-control hidden absolute -right-2 -top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+              onclick="deleteEditableItem(this)"
+            >
+              ×
+            </button>
+          </div>
+          <!-- Timeline Item 5 -->
+          <div
+            class="relative group fade-left-active delay-500"
+            data-editable="timeline"
+            data-id="5"
+          >
+            <div
+              class="absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full bg-slate-500 group-hover:bg-white transition-colors z-10 ring-4 ring-black/20"
+            ></div>
+            <div
+              class="text-xs mb-1 tracking-wider"
+              style="color: var(--text-muted)"
+              data-field="date"
+            >
+              2019.1
+            </div>
+            <h4
+              class="text-sm font-semibold group-hover:opacity-80 transition-colors heading"
+              data-field="title"
+            >
+              在Cherry Bullet出道
+            </h4>
+            <button
+              class="edit-delete-btn edit-control hidden absolute -right-2 -top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+              onclick="deleteEditableItem(this)"
+            >
+              ×
+            </button>
+          </div>
+          <!-- Add Timeline Button -->
+          <button
+            class="edit-add-btn hidden w-full py-3 rounded-xl text-sm flex items-center justify-center gap-2"
+            onclick="addTimelineItem()"
+          >
+            <i class="fas fa-plus"></i> 添加事件
+          </button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col md:flex-row gap-10">
+        <!-- Profile Sidebar -->
+        <div
+          class="w-full md:w-72 flex-shrink-0 flex flex-col gap-6 items-center md:items-start pt-8 fade-enter-active delay-100"
+        >
+          <!-- Avatar -->
+          <div
+            class="avatar-container relative w-56 h-56 mx-auto md:mx-0 group animate-float"
+          >
+            <div
+              class="avatar-glow absolute inset-0 rounded-full bg-white/20 blur-2xl opacity-30 group-hover:opacity-50 transition-opacity duration-500"
+            ></div>
+            <img
+              alt="Javian Avatar"
+              class="relative w-full h-full object-cover shadow-2xl z-10"
+              src="touxiang.jpg"
+              data-field="avatar"
+            />
+            <!-- Image Upload Overlay (shown in edit mode) -->
+            <div
+              class="image-upload-overlay"
+              onclick="document.getElementById('avatarUpload').click()"
+            >
+              <i class="fas fa-camera"></i>
+            </div>
+          </div>
+
+          <!-- Social Links -->
+          <div class="flex gap-4 justify-center md:justify-start w-full px-2">
+            <a
+              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+              href="#"
+            >
+              <img
+                alt="Lang"
+                class="w-5 h-5 rounded-full object-cover opacity-80"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4wEQm-SKKAqUtv1J6RTG3L7AxRRUAp2Z1-nna4MxQ-kYvfghsoXspNgivIk2va-io4jIHMur0YwYhywYcOS2Q1VrW4sUcGZ_lwwFmAa2grjymU112fxXqed9-6TyUrAv69rY0sf9cO8bZ4so3M0M6RLNbhd8nVnpC8-1QCRK2aw86jPqFkC23tm4TRaQfPfdHikiBqVfNyWZ3CENTOS0BoNn9lT3nrurKStNaIEZWsVdTbhNA9_9JVsDJqRC3eamaWAPYS9xMckgk"
+              />
+            </a>
+            <a
+              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+              href="#"
+            >
+              <i class="fab fa-telegram-plane"></i>
+            </a>
+            <a
+              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+              href="#"
+            >
+              <i class="fab fa-github"></i>
+            </a>
+            <a
+              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+              href="#"
+            >
+              <i class="fas fa-envelope"></i>
+            </a>
+          </div>
+
+          <!-- Info Card -->
+          <div class="w-full glass-panel rounded-2xl p-5" data-editable="info">
+            <div class="flex items-center gap-3 mb-3">
+              <div
+                class="w-6 flex justify-center"
+                style="color: var(--accent-color)"
+              >
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <span class="text-sm font-medium" data-field="location"
+                >ShenZhen</span
+              >
+            </div>
+            <div class="flex items-center gap-3">
+              <div
+                class="w-6 flex justify-center"
+                style="color: var(--accent-color)"
+              >
+                <i class="fas fa-briefcase"></i>
+              </div>
+              <span class="text-sm font-medium" data-field="status"
+                >Currently employed</span
+              >
+            </div>
+          </div>
+
+          <!-- Tags -->
+          <div
+            class="w-full glass-panel rounded-2xl p-5 flex flex-wrap gap-2"
+            id="tagsContainer"
+          >
+            <span
+              class="tag px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-default wobble-hover relative"
+              data-editable="tag"
+            >
+              <span data-field="tag">Kpop</span>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
+            </span>
+            <span
+              class="tag px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-default wobble-hover relative"
+              data-editable="tag"
+            >
+              <span data-field="tag">Currently employed</span>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
+            </span>
+            <span
+              class="tag px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-default wobble-hover relative"
+              data-editable="tag"
+            >
+              <span data-field="tag">Cherry Bullet</span>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
+            </span>
+            <span
+              class="tag px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-default wobble-hover relative"
+              data-editable="tag"
+            >
+              <span data-field="tag">1997.3.5</span>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
+            </span>
+            <span
+              class="tag px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-default wobble-hover relative"
+              data-editable="tag"
+            >
+              <span data-field="tag">Singer</span>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
+            </span>
+            <span
+              class="tag px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-default wobble-hover relative"
+              data-editable="tag"
+            >
+              <span data-field="tag">Dancer</span>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
+            </span>
+            <span
+              class="tag px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-default wobble-hover relative"
+              data-editable="tag"
+            >
+              <span data-field="tag">FNC</span>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
+            </span>
+            <span
+              class="tag px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-default wobble-hover relative"
+              data-editable="tag"
+            >
+              <span data-field="tag">유주</span>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
+            </span>
+            <!-- Add Tag Button -->
+            <button
+              class="edit-add-btn hidden px-3 py-1 rounded-lg text-xs font-medium"
+              onclick="addTag()"
+            >
+              <i class="fas fa-plus"></i> 添加
+            </button>
+          </div>
+        </div>
+
+        <!-- Hero & Sites -->
+        <div class="flex-1 flex flex-col gap-12 fade-enter-active delay-200">
+          <!-- Hero Section -->
+          <div
+            class="relative pt-4 md:pt-10 pb-4 flex items-center justify-start animate-float-delayed"
+          >
+            <div class="flex items-center gap-8">
+              <!-- Original Context -->
+              <div class="relative z-10">
+                <h1
+                  class="text-3xl md:text-5xl font-bold tracking-tight mb-3 drop-shadow-xl whitespace-nowrap heading"
+                >
+                  <span>Hello I'm</span>
+                  <span class="text-gradient">Javian</span>
+                </h1>
+                <div
+                  class="flex flex-wrap items-center gap-3 text-base md:text-lg font-medium mb-3"
+                >
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]"
+                      >☀️</span
+                    >
+                    <span
+                      id="clock"
+                      class="font-bold font-mono"
+                      style="color: var(--text-secondary)"
+                    ></span>
+                  </div>
+                  <div
+                    class="w-1 h-1 rounded-full"
+                    style="background: var(--border-color)"
+                  ></div>
+                  <div class="flex items-center gap-2">
+                    <span class="drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                      >💖</span
+                    >
+                    <span class="font-medium opacity-80">Let's</span>
+                    <span
+                      class="tag px-2 py-0.5 rounded-md text-xs font-bold backdrop-blur-sm"
+                      >Play</span
+                    >
+                    <span
+                      class="tag px-2 py-0.5 rounded-md font-bold text-xs backdrop-blur-sm"
+                      >Cherry Bullet</span
+                    >
+                  </div>
+                </div>
+                <div
+                  class="h-[2px] w-full max-w-sm mt-4 rounded-full opacity-70"
+                  style="
+                    background: linear-gradient(
+                      to right,
+                      var(--accent-color),
+                      transparent
+                    );
+                  "
+                ></div>
+              </div>
+
+              <!-- Vertical Divider -->
+              <div
+                class="w-[1px] h-32 hidden md:block"
+                style="
+                  background: linear-gradient(
+                    to bottom,
+                    transparent,
+                    var(--border-hover),
+                    transparent
+                  );
+                "
+              ></div>
+
+              <!-- Horizontal Reflection (Mirrored) -->
+              <div
+                class="relative z-10 opacity-30 select-none pointer-events-none scale-x-[-1] blur-[0.5px] hidden md:block"
+              >
+                <h1
+                  class="text-3xl md:text-5xl font-bold tracking-tight mb-3 whitespace-nowrap heading"
+                >
+                  <span>Hello I'm</span>
+                  <span class="text-gradient">Javian</span>
+                </h1>
+                <div
+                  class="flex flex-wrap items-center gap-3 text-base md:text-lg font-medium mb-3"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="text-yellow-400">☀️</span>
+                    <span
+                      id="clock-reflection"
+                      class="font-bold font-mono"
+                      style="color: var(--text-secondary)"
+                    ></span>
+                  </div>
+                  <div
+                    class="w-1 h-1 rounded-full"
+                    style="background: var(--border-color)"
+                  ></div>
+                  <div class="flex items-center gap-2">
+                    <span>💖</span>
+                    <span class="font-medium opacity-80">Let's</span>
+                    <span
+                      class="tag px-2 py-0.5 rounded-md text-xs font-bold backdrop-blur-sm"
+                      >Play</span
+                    >
+                    <span
+                      class="tag px-2 py-0.5 rounded-md font-bold text-xs backdrop-blur-sm"
+                      >Cherry Bullet</span
+                    >
+                  </div>
+                </div>
+                <div
+                  class="h-[1px] w-full max-w-sm mt-4 rounded-full opacity-70"
+                  style="
+                    background: linear-gradient(
+                      to right,
+                      var(--accent-color),
+                      transparent
+                    );
+                  "
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Site Section -->
+          <section class="mt-8">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3 heading">
+              <span
+                class="w-1.5 h-6 rounded-full"
+                style="
+                  background: var(--accent-color);
+                  box-shadow: 0 0 10px var(--accent-glow);
+                "
+              ></span>
+              <i class="fas fa-globe" style="color: var(--accent-color)"></i>
+              Site
+            </h2>
+            <div
+              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5"
+              id="sitesContainer"
+            >
+              <!-- Site Card 1 -->
+              <div
+                class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-300 wobble-hover relative"
+                data-editable="site"
+                data-id="1"
+                data-url="#"
+              >
+                <div class="flex justify-between items-start mb-3">
+                  <h3
+                    class="font-bold text-lg group-hover:opacity-80 transition-colors heading"
+                    data-field="title"
+                  >
+                    博客
+                  </h3>
+                  <div
+                    class="site-card-icon w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                    data-field="icon"
+                  >
+                    <i class="fas fa-lightbulb"></i>
+                  </div>
+                </div>
+                <p
+                  class="text-xs font-light"
+                  style="color: var(--text-muted)"
+                  data-field="description"
+                >
+                  记录学习日常
+                </p>
+                <button
+                  class="edit-delete-btn edit-control hidden absolute right-2 top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+                  onclick="deleteEditableItem(this)"
+                >
+                  ×
+                </button>
+              </div>
+              <!-- Site Card 2 -->
+              <div
+                class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-400 wobble-hover relative"
+                data-editable="site"
+                data-id="2"
+                data-url="#"
+              >
+                <div class="flex justify-between items-start mb-3">
+                  <h3
+                    class="font-bold text-lg group-hover:opacity-80 transition-colors heading"
+                    data-field="title"
+                  >
+                    云盘
+                  </h3>
+                  <div
+                    class="site-card-icon w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                    data-field="icon"
+                  >
+                    <i class="fas fa-cloud"></i>
+                  </div>
+                </div>
+                <p
+                  class="text-xs font-light"
+                  style="color: var(--text-muted)"
+                  data-field="description"
+                >
+                  分享收集文件
+                </p>
+                <button
+                  class="edit-delete-btn edit-control hidden absolute right-2 top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+                  onclick="deleteEditableItem(this)"
+                >
+                  ×
+                </button>
+              </div>
+              <!-- Site Card 3 -->
+              <div
+                class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-500 wobble-hover relative"
+                data-editable="site"
+                data-id="3"
+                data-url="#"
+              >
+                <div class="flex justify-between items-start mb-3">
+                  <h3
+                    class="font-bold text-lg group-hover:opacity-80 transition-colors heading"
+                    data-field="title"
+                  >
+                    文件箱
+                  </h3>
+                  <div
+                    class="site-card-icon w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                    data-field="icon"
+                  >
+                    <i class="fas fa-truck-loading"></i>
+                  </div>
+                </div>
+                <p
+                  class="text-xs font-light"
+                  style="color: var(--text-muted)"
+                  data-field="description"
+                >
+                  传输文件
+                </p>
+                <button
+                  class="edit-delete-btn edit-control hidden absolute right-2 top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+                  onclick="deleteEditableItem(this)"
+                >
+                  ×
+                </button>
+              </div>
+              <!-- Site Card 4 -->
+              <div
+                class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-600 wobble-hover relative"
+                data-editable="site"
+                data-id="4"
+                data-url="#"
+              >
+                <div class="flex justify-between items-start mb-3">
+                  <h3
+                    class="font-bold text-lg group-hover:opacity-80 transition-colors heading"
+                    data-field="title"
+                  >
+                    待建
+                  </h3>
+                  <div
+                    class="site-card-icon accent w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                    data-field="icon"
+                  >
+                    <i class="fas fa-pencil-alt"></i>
+                  </div>
+                </div>
+                <p
+                  class="text-xs font-light"
+                  style="color: var(--text-muted)"
+                  data-field="description"
+                >
+                  待建
+                </p>
+                <button
+                  class="edit-delete-btn edit-control hidden absolute right-2 top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center"
+                  onclick="deleteEditableItem(this)"
+                >
+                  ×
+                </button>
+              </div>
+              <!-- Add Site Card Button -->
+              <button
+                class="edit-add-btn hidden p-5 rounded-2xl min-h-[120px] flex flex-col items-center justify-center gap-2"
+                onclick="addSiteCard()"
+              >
+                <i class="fas fa-plus text-xl"></i>
+                <span class="text-sm">添加站点</span>
+              </button>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- Footer -->
+    <footer
+      class="text-center py-10 text-sm relative z-10 backdrop-blur-sm border-t"
+    >
+      Javian © 2025
+    </footer>
+
+    <script>
+      // ==============================
+      // Configuration & State
+      // ==============================
+      const AUTH_TOKEN_KEY = "javian_auth_token";
+      let isEditMode = false;
+      let currentConfig = null;
+      let originalConfig = null;
+
+      // ==============================
+      // Theme Toggle Logic
+      // ==============================
+      const themeToggle = document.getElementById("themeToggle");
+      const iconDark = document.querySelector(".theme-icon-dark");
+      const iconHanddrawn = document.querySelector(".theme-icon-handdrawn");
+
+      function setTheme(theme) {
+        if (theme === "handdrawn") {
+          document.documentElement.classList.add("theme-handdrawn");
+          iconDark.classList.add("hidden");
+          iconHanddrawn.classList.remove("hidden");
+        } else {
+          document.documentElement.classList.remove("theme-handdrawn");
+          iconDark.classList.remove("hidden");
+          iconHanddrawn.classList.add("hidden");
+        }
+        localStorage.setItem("theme", theme);
+      }
+
+      const savedTheme = localStorage.getItem("theme") || "dark";
+      setTheme(savedTheme);
+
+      themeToggle.addEventListener("click", () => {
+        const currentTheme = document.documentElement.classList.contains(
+          "theme-handdrawn",
+        )
+          ? "handdrawn"
+          : "dark";
+        const newTheme = currentTheme === "dark" ? "handdrawn" : "dark";
+        setTheme(newTheme);
+      });
+
+      // ==============================
+      // Clock Logic
+      // ==============================
+      function updateClock() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        const hours = String(now.getHours()).padStart(2, "0");
+        const minutes = String(now.getMinutes()).padStart(2, "0");
+        const seconds = String(now.getSeconds()).padStart(2, "0");
+
+        const timeString = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+        const clockElement = document.getElementById("clock");
+        const clockReflectionElement =
+          document.getElementById("clock-reflection");
+
+        if (clockElement) clockElement.textContent = timeString;
+        if (clockReflectionElement)
+          clockReflectionElement.textContent = timeString;
+      }
+
+      setInterval(updateClock, 1000);
+      updateClock();
+
+      // ==============================
+      // Auth Functions
+      // ==============================
+      function getToken() {
+        return localStorage.getItem(AUTH_TOKEN_KEY);
+      }
+
+      function isAuthenticated() {
+        return !!getToken();
+      }
+
+      function openAuthModal() {
+        if (isAuthenticated()) {
+          // Already logged in, enable edit mode
+          enableEditMode();
+        } else {
+          document.getElementById("authModal").classList.remove("hidden");
+          document.getElementById("authPassword").focus();
+        }
+      }
+
+      function closeAuthModal() {
+        document.getElementById("authModal").classList.add("hidden");
+        document.getElementById("authPassword").value = "";
+        document.getElementById("authError").classList.add("hidden");
+      }
+
+      async function handleLogin() {
+        const password = document.getElementById("authPassword").value;
+        const errorEl = document.getElementById("authError");
+
+        if (!password) {
+          errorEl.textContent = "请输入密码";
+          errorEl.classList.remove("hidden");
+          return;
+        }
+
+        try {
+          const res = await fetch("/api/auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ password }),
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            errorEl.textContent = data.error || "密码错误";
+            errorEl.classList.remove("hidden");
+            return;
+          }
+
+          localStorage.setItem(AUTH_TOKEN_KEY, data.token);
+          closeAuthModal();
+          enableEditMode();
+          showToast("登录成功，已进入编辑模式", "success");
+        } catch (error) {
+          errorEl.textContent = "网络错误，请重试";
+          errorEl.classList.remove("hidden");
+        }
+      }
+
+      function handleLogout() {
+        localStorage.removeItem(AUTH_TOKEN_KEY);
+        disableEditMode();
+        document.getElementById("authBtn").classList.remove("authenticated");
+        showToast("已退出登录", "info");
+      }
+
+      // ==============================
+      // Edit Mode Functions
+      // ==============================
+      function enableEditMode() {
+        isEditMode = true;
+        originalConfig = currentConfig
+          ? JSON.parse(JSON.stringify(currentConfig))
+          : null;
+
+        document.body.classList.add("edit-mode");
+        document.getElementById("editToolbar").classList.remove("hidden");
+        document.getElementById("authBtn").classList.add("authenticated");
+        document.getElementById("authBtn").innerHTML =
+          '<i class="fas fa-unlock"></i>';
+
+        // Enable contenteditable on editable fields
+        document.querySelectorAll("[data-field]").forEach((el) => {
+          if (!el.closest(".pointer-events-none")) {
+            // Skip reflection elements
+            el.contentEditable = "true";
+            el.classList.add("editable-field");
+          }
+        });
+
+        // Show delete buttons
+        document.querySelectorAll(".edit-delete-btn").forEach((btn) => {
+          btn.classList.remove("hidden");
+        });
+
+        // Show add buttons
+        document.querySelectorAll(".edit-add-btn").forEach((btn) => {
+          btn.classList.remove("hidden");
+        });
+
+        // Add editable active class
+        document.querySelectorAll("[data-editable]").forEach((el) => {
+          el.classList.add("editable-active");
+        });
+      }
+
+      function disableEditMode() {
+        isEditMode = false;
+
+        document.body.classList.remove("edit-mode");
+        document.getElementById("editToolbar").classList.add("hidden");
+        document.getElementById("authBtn").innerHTML =
+          '<i class="fas fa-lock"></i>';
+
+        // Disable contenteditable
+        document.querySelectorAll("[data-field]").forEach((el) => {
+          el.contentEditable = "false";
+          el.classList.remove("editable-field");
+        });
+
+        // Hide delete buttons
+        document.querySelectorAll(".edit-delete-btn").forEach((btn) => {
+          btn.classList.add("hidden");
+        });
+
+        // Hide add buttons
+        document.querySelectorAll(".edit-add-btn").forEach((btn) => {
+          btn.classList.add("hidden");
+        });
+
+        // Remove editable active class
+        document.querySelectorAll("[data-editable]").forEach((el) => {
+          el.classList.remove("editable-active");
+        });
+      }
+
+      function handleCancelEdit() {
+        if (confirm("确定要取消编辑吗？未保存的更改将丢失。")) {
+          // Reload the page to restore original content
+          location.reload();
+        }
+      }
+
+      // ==============================
+      // Data Collection & Save
+      // ==============================
+      function collectEditedData() {
+        const data = {
+          timeline: [],
+          sites: [],
+          tags: [],
+          info: {},
+          images: {},
+        };
+
+        // Collect timeline data
+        document
+          .querySelectorAll('[data-editable="timeline"]')
+          .forEach((el) => {
+            const dateEl = el.querySelector('[data-field="date"]');
+            const titleEl = el.querySelector('[data-field="title"]');
+            if (dateEl && titleEl) {
+              data.timeline.push({
+                id: el.dataset.id || generateId(),
+                date: dateEl.textContent.trim(),
+                title: titleEl.textContent.trim(),
+                highlight: el.classList.contains("timeline-highlight"),
+              });
+            }
+          });
+
+        // Collect site cards
+        document.querySelectorAll('[data-editable="site"]').forEach((el) => {
+          const titleEl = el.querySelector('[data-field="title"]');
+          const descEl = el.querySelector('[data-field="description"]');
+          const iconEl = el.querySelector('[data-field="icon"] i');
+          if (titleEl) {
+            data.sites.push({
+              id: el.dataset.id || generateId(),
+              title: titleEl.textContent.trim(),
+              description: descEl?.textContent.trim() || "",
+              icon: iconEl?.className.replace("fas ", "") || "fa-link",
+              url: el.dataset.url || el.href || "#",
+              accent: el.classList.contains("site-accent"),
+            });
+          }
+        });
+
+        // Collect tags
+        document.querySelectorAll('[data-editable="tag"]').forEach((el) => {
+          const text = el.textContent.trim();
+          if (text) {
+            data.tags.push(text);
+          }
+        });
+
+        // Collect info
+        const locationEl = document.querySelector('[data-field="location"]');
+        const statusEl = document.querySelector('[data-field="status"]');
+        data.info = {
+          location: locationEl?.textContent.trim() || "ShenZhen",
+          status: statusEl?.textContent.trim() || "Currently employed",
+        };
+
+        // Collect images
+        const avatarEl = document.querySelector('[data-field="avatar"]');
+        const bgEl = document.querySelector('[data-field="background"]');
+        data.images = {
+          avatar: avatarEl?.src || "touxiang.jpg",
+          background: bgEl?.src || "Background.webp",
+        };
+
+        return data;
+      }
+
+      async function handleSave() {
+        const token = getToken();
+        if (!token) {
+          showToast("请先登录", "error");
+          return;
+        }
+
+        const data = collectEditedData();
+
+        try {
+          const res = await fetch("/api/config", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(data),
+          });
+
+          const result = await res.json();
+
+          if (!res.ok) {
+            if (res.status === 401) {
+              handleLogout();
+              showToast("登录已过期，请重新登录", "error");
+            } else {
+              showToast(result.error || "保存失败", "error");
+            }
+            return;
+          }
+
+          currentConfig = data;
+          showToast("保存成功！", "success");
+        } catch (error) {
+          showToast("网络错误，请重试", "error");
+        }
+      }
+
+      // ==============================
+      // Image Upload
+      // ==============================
+      async function handleImageUpload(input, type) {
+        const file = input.files[0];
+        if (!file) return;
+
+        const token = getToken();
+        if (!token) {
+          showToast("请先登录", "error");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("type", type);
+
+        try {
+          showToast("正在上传...", "info");
+
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          });
+
+          const data = await res.json();
+
+          if (!res.ok) {
+            showToast(data.error || "上传失败", "error");
+            return;
+          }
+
+          // Update the image
+          if (type === "avatar") {
+            const avatarImg = document.querySelector(".avatar-container img");
+            if (avatarImg) avatarImg.src = data.url;
+          } else if (type === "background") {
+            const bgImg = document.querySelector(".theme-bg-dark img");
+            if (bgImg) bgImg.src = data.url;
+          }
+
+          showToast("上传成功！", "success");
+        } catch (error) {
+          showToast("网络错误，请重试", "error");
+        }
+
+        // Clear the input
+        input.value = "";
+      }
+
+      // ==============================
+      // Delete Functions
+      // ==============================
+      window.deleteEditableItem = function (button) {
+        const item = button.closest("[data-editable]");
+        if (item && confirm("确定要删除此项吗？")) {
+          item.remove();
+          showToast("已删除", "info");
+        }
+      };
+
+      // ==============================
+      // Add Functions
+      // ==============================
+      window.addTimelineItem = function () {
+        const container = document.getElementById("timelineItems");
+        const addBtn = container.querySelector(".edit-add-btn");
+        const newId = generateId();
+
+        const newItem = document.createElement("div");
+        newItem.className = "relative group fade-left-active";
+        newItem.setAttribute("data-editable", "timeline");
+        newItem.setAttribute("data-id", newId);
+        newItem.innerHTML = `
+          <div class="absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full bg-slate-500 group-hover:bg-white transition-colors z-10 ring-4 ring-black/20"></div>
+          <div class="text-xs mb-1 tracking-wider editable-field" style="color: var(--text-muted)" data-field="date" contenteditable="true">YYYY.MM</div>
+          <h4 class="text-sm font-semibold group-hover:opacity-80 transition-colors heading editable-field" data-field="title" contenteditable="true">新事件</h4>
+          <button class="edit-delete-btn edit-control absolute -right-2 -top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+        `;
+
+        container.insertBefore(newItem, addBtn);
+        newItem.classList.add("editable-active");
+        showToast("已添加新事件", "success");
+      };
+
+      window.addSiteCard = function () {
+        const container = document.getElementById("sitesContainer");
+        const addBtn = container.querySelector(".edit-add-btn");
+        const newId = generateId();
+
+        const newCard = document.createElement("div");
+        newCard.className =
+          "group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 wobble-hover relative";
+        newCard.setAttribute("data-editable", "site");
+        newCard.setAttribute("data-id", newId);
+        newCard.setAttribute("data-url", "#");
+        newCard.innerHTML = `
+          <div class="flex justify-between items-start mb-3">
+            <h3 class="font-bold text-lg group-hover:opacity-80 transition-colors heading editable-field" data-field="title" contenteditable="true">新站点</h3>
+            <div class="site-card-icon w-9 h-9 rounded-full flex items-center justify-center shadow-[0_0_15px_rgba(255,255,255,0.1)]" data-field="icon">
+              <i class="fas fa-link"></i>
+            </div>
+          </div>
+          <p class="text-xs font-light editable-field" style="color: var(--text-muted)" data-field="description" contenteditable="true">站点描述</p>
+          <button class="edit-delete-btn edit-control absolute right-2 top-2 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+        `;
+
+        container.insertBefore(newCard, addBtn);
+        newCard.classList.add("editable-active");
+        showToast("已添加新站点", "success");
+      };
+
+      window.addTag = function () {
+        const container = document.getElementById("tagsContainer");
+        const addBtn = container.querySelector(".edit-add-btn");
+
+        const newTag = document.createElement("span");
+        newTag.className =
+          "tag px-3 py-1 rounded-lg text-xs font-medium transition-all cursor-default wobble-hover relative";
+        newTag.setAttribute("data-editable", "tag");
+        newTag.innerHTML = `
+          <span data-field="tag" class="editable-field" contenteditable="true">新标签</span>
+          <button class="edit-delete-btn absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] flex items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+        `;
+
+        container.insertBefore(newTag, addBtn);
+        newTag.classList.add("editable-active");
+        showToast("已添加新标签", "success");
+      };
+
+      // ==============================
+      // Utility Functions
+      // ==============================
+      function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2);
+      }
+
+      function showToast(message, type = "info") {
+        // Create toast element
+        const toast = document.createElement("div");
+        toast.className = `fixed top-20 right-6 z-[200] px-4 py-3 rounded-xl shadow-lg backdrop-blur-md transition-all duration-300 transform translate-x-full`;
+
+        const colors = {
+          success: "bg-green-500/20 text-green-400 border border-green-500/30",
+          error: "bg-red-500/20 text-red-400 border border-red-500/30",
+          info: "bg-white/10 text-white border border-white/20",
+        };
+
+        toast.className += ` ${colors[type] || colors.info}`;
+        toast.innerHTML = `<span class="text-sm font-medium">${message}</span>`;
+
+        document.body.appendChild(toast);
+
+        // Animate in
+        requestAnimationFrame(() => {
+          toast.classList.remove("translate-x-full");
+        });
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+          toast.classList.add("translate-x-full");
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      // ==============================
+      // Initialize
+      // ==============================
+      document.addEventListener("DOMContentLoaded", async () => {
+        // Check if user is already logged in
+        if (isAuthenticated()) {
+          document.getElementById("authBtn").classList.add("authenticated");
+        }
+
+        // Load config from server (optional, for dynamic content)
+        try {
+          const res = await fetch("/api/config");
+          if (res.ok) {
+            currentConfig = await res.json();
+            // You can use currentConfig to dynamically render content if needed
+          }
+        } catch (error) {
+          console.log("Running in static mode");
+        }
+      });
+    </script>
+  </body>
+</html>

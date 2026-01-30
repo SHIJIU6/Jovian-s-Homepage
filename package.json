@@ -1,0 +1,14 @@
+{
+  "name": "javian-homepage",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler pages dev public --kv SITE_CONFIG --kv AUTH_TOKENS --r2 IMAGES",
+    "deploy": "wrangler pages deploy public",
+    "kv:create": "wrangler kv:namespace create SITE_CONFIG && wrangler kv:namespace create AUTH_TOKENS",
+    "r2:create": "wrangler r2 bucket create javian-images"
+  },
+  "devDependencies": {
+    "wrangler": "^3.0.0"
+  }
+}

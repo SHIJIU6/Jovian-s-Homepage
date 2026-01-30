@@ -1,0 +1,22 @@
+name = "javian-homepage"
+compatibility_date = "2024-01-01"
+
+# KV Namespaces (部署后需要替换为实际 ID)
+# 运行 npm run kv:create 创建后，将 ID 填入下方
+[[kv_namespaces]]
+binding = "SITE_CONFIG"
+id = "YOUR_SITE_CONFIG_KV_ID"
+
+[[kv_namespaces]]
+binding = "AUTH_TOKENS"
+id = "YOUR_AUTH_TOKENS_KV_ID"
+
+# R2 Bucket for images
+# 运行 npm run r2:create 创建后配置
+[[r2_buckets]]
+binding = "IMAGES"
+bucket_name = "javian-images"
+
+# 环境变量说明:
+# ADMIN_PASSWORD - 管理员密码，通过 Cloudflare Dashboard 设置
+# 路径: Workers & Pages > 你的项目 > Settings > Environment variables
