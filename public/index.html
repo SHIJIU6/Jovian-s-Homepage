@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Javian Personal Profile</title>
+    <title>Jovian Personal Profile</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -664,7 +664,7 @@
     </style>
   </head>
   <body
-    class="min-h-screen relative overflow-x-hidden selection:bg-primary selection:text-white"
+    class="min-h-screen flex flex-col relative overflow-x-hidden selection:bg-primary selection:text-white"
   >
     <!-- Background Layers -->
     <div class="theme-bg-dark fixed inset-0 -z-10">
@@ -785,7 +785,7 @@
     </button>
 
     <div
-      class="relative z-10 max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-16"
+      class="flex-1 relative z-10 max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-16"
     >
       <!-- Timeline Sidebar -->
       <aside
@@ -834,35 +834,83 @@
           </div>
 
           <!-- Social Links -->
-          <div class="flex gap-4 justify-center md:justify-start w-full px-2">
+          <div
+            class="flex gap-4 justify-center md:justify-start w-full px-2"
+            id="socialLinksContainer"
+          >
             <a
-              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative"
               href="#"
+              data-editable="social"
+              data-id="1"
+              data-type="image"
             >
               <img
                 alt="Lang"
                 class="w-5 h-5 rounded-full object-cover opacity-80"
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4wEQm-SKKAqUtv1J6RTG3L7AxRRUAp2Z1-nna4MxQ-kYvfghsoXspNgivIk2va-io4jIHMur0YwYhywYcOS2Q1VrW4sUcGZ_lwwFmAa2grjymU112fxXqed9-6TyUrAv69rY0sf9cO8bZ4so3M0M6RLNbhd8nVnpC8-1QCRK2aw86jPqFkC23tm4TRaQfPfdHikiBqVfNyWZ3CENTOS0BoNn9lT3nrurKStNaIEZWsVdTbhNA9_9JVsDJqRC3eamaWAPYS9xMckgk"
+                data-field="image"
               />
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
             </a>
             <a
-              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative"
               href="#"
+              data-editable="social"
+              data-id="2"
+              data-type="icon"
             >
-              <i class="fab fa-telegram-plane"></i>
+              <i class="fab fa-telegram-plane" data-field="icon"></i>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
             </a>
             <a
-              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative"
               href="#"
+              data-editable="social"
+              data-id="3"
+              data-type="icon"
             >
-              <i class="fab fa-github"></i>
+              <i class="fab fa-github" data-field="icon"></i>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
             </a>
             <a
-              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm"
+              class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative"
               href="#"
+              data-editable="social"
+              data-id="4"
+              data-type="icon"
             >
-              <i class="fas fa-envelope"></i>
+              <i class="fas fa-envelope" data-field="icon"></i>
+              <button
+                class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center"
+                onclick="deleteEditableItem(this)"
+              >
+                ×
+              </button>
             </a>
+            <!-- Add Social Link Button -->
+            <button
+              class="edit-add-btn hidden w-10 h-10 rounded-full flex items-center justify-center"
+              onclick="addSocialLink()"
+              title="添加社交链接"
+            >
+              <i class="fas fa-plus"></i>
+            </button>
           </div>
 
           <!-- Info Card -->
@@ -1207,7 +1255,7 @@
     <footer
       class="text-center py-10 text-sm relative z-10 backdrop-blur-sm border-t"
     >
-      Javian © 2025
+      Jovian © 2026
     </footer>
 
     <script>
@@ -1284,6 +1332,11 @@
             const bgImg = document.querySelector(".theme-bg-dark img");
             if (bgImg) bgImg.src = config.images.background;
           }
+        }
+
+        // Render social links
+        if (config.socialLinks && config.socialLinks.length > 0) {
+          renderSocialLinks(config.socialLinks);
         }
       }
 
@@ -1386,6 +1439,66 @@
 
         if (addBtn) container.appendChild(addBtn);
       }
+
+      function renderSocialLinks(socialLinks) {
+        const container = document.getElementById("socialLinksContainer");
+        if (!container) return;
+
+        const addBtn = container.querySelector(".edit-add-btn");
+        container.innerHTML = "";
+
+        socialLinks.forEach((link) => {
+          const a = document.createElement("a");
+          a.className =
+            "social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative";
+          a.href = link.href || "#";
+          a.setAttribute("data-editable", "social");
+          a.setAttribute("data-id", link.id || generateId());
+          a.setAttribute("data-type", link.type || "icon");
+
+          if (link.type === "image" && link.image) {
+            a.innerHTML = `
+              <img alt="Social" class="w-5 h-5 rounded-full object-cover opacity-80" src="${link.image}" data-field="image" />
+              <button class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+            `;
+          } else {
+            a.innerHTML = `
+              <i class="${link.icon || "fas fa-link"}" data-field="icon"></i>
+              <button class="edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+            `;
+          }
+
+          container.appendChild(a);
+        });
+
+        if (addBtn) container.appendChild(addBtn);
+      }
+
+      window.addSocialLink = function () {
+        const container = document.getElementById("socialLinksContainer");
+        if (!container) return;
+
+        const addBtn = container.querySelector(".edit-add-btn");
+
+        const a = document.createElement("a");
+        a.className =
+          "social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative editable-active";
+        a.href = "#";
+        a.setAttribute("data-editable", "social");
+        a.setAttribute("data-id", "new-" + generateId());
+        a.setAttribute("data-type", "icon");
+
+        a.innerHTML = `
+          <i class="fas fa-link" data-field="icon"></i>
+          <button class="edit-delete-btn flex absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center" onclick="deleteEditableItem(this)">×</button>
+        `;
+
+        if (addBtn) {
+          container.insertBefore(a, addBtn);
+        } else {
+          container.appendChild(a);
+        }
+      };
 
       // Load config on page load
       document.addEventListener("DOMContentLoaded", loadConfig);
@@ -1664,6 +1777,35 @@
           background: bgEl?.src || "Background.webp",
         };
 
+        // Collect social links
+        data.socialLinks = [];
+        document.querySelectorAll('[data-editable="social"]').forEach((el) => {
+          const type = el.dataset.type || "icon";
+          const href = el.getAttribute("href") || "#";
+          let icon = "";
+          let image = "";
+
+          if (type === "image") {
+            const imgEl = el.querySelector("img");
+            if (imgEl) {
+              image = imgEl.src;
+            }
+          } else {
+            const iconEl = el.querySelector("i");
+            if (iconEl) {
+              icon = iconEl.className;
+            }
+          }
+
+          data.socialLinks.push({
+            id: el.dataset.id || generateId(),
+            type: type,
+            href: href,
+            icon: icon,
+            image: image,
+          });
+        });
+
         return data;
       }
 
@@ -1837,13 +1979,6 @@
         newTag.classList.add("editable-active");
         showToast("已添加新标签", "success");
       };
-
-      // ==============================
-      // Utility Functions
-      // ==============================
-      function generateId() {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2);
-      }
 
       function showToast(message, type = "info") {
         // Create toast element
