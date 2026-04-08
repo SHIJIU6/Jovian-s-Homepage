@@ -8,51 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <link href="/custom.css?v=20260130-10" rel="stylesheet" />
-    <link
-      href="/assets/tailwind.css?v=20260130-2"
-      rel="stylesheet"
-      id="tailwind-local"
-    />
-    <script>
-      // Fallback: if you forgot to build /assets/tailwind.css, load Tailwind CDN so the page is still usable.
-      // When /assets/tailwind.css exists, this does nothing (no extra network request).
-      (function () {
-        const link = document.getElementById("tailwind-local");
-        if (!link) return;
-
-        link.addEventListener("error", function () {
-          // Provide the same config we used previously on the CDN version.
-          window.tailwind = window.tailwind || {};
-          window.tailwind.config = {
-            darkMode: "class",
-            theme: {
-              extend: {
-                colors: {
-                  primary: "#ffffff",
-                  "primary-dark": "#e4e4e7",
-                  "accent-green": "#10b981",
-                  "glass-border": "rgba(255, 255, 255, 0.08)",
-                  "glass-bg": "rgba(24, 24, 27, 0.4)",
-                  "glass-bg-hover": "rgba(39, 39, 42, 0.5)",
-                },
-                fontFamily: {
-                  display: ["Poppins", "sans-serif"],
-                  body: ["Poppins", "sans-serif"],
-                },
-                borderRadius: {
-                  DEFAULT: "0.75rem",
-                },
-              },
-            },
-          };
-
-          const s = document.createElement("script");
-          s.src = "https://cdn.tailwindcss.com?plugins=forms,typography";
-          document.head.appendChild(s);
-        });
-      })();
-    </script>
+    <link href="/assets/styles.css?v=20260323-4" rel="stylesheet" />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -712,6 +668,7 @@
     <!-- Edit Toolbar (shown when logged in) -->
     <div
       id="editToolbar"
+      data-layout-id="module-edit-toolbar"
       class="edit-toolbar hidden fixed top-6 right-36 z-50 glass-panel rounded-full px-4 py-2 flex items-center gap-3 whitespace-nowrap shadow-lg backdrop-blur-md"
     >
       <span class="text-sm opacity-80"
@@ -719,18 +676,28 @@
       >
       <button
         onclick="handleSave()"
+        data-layout-id="button-edit-save"
         class="px-4 py-1.5 rounded-lg bg-green-500/20 text-green-400 text-sm hover:bg-green-500/30 transition flex items-center gap-1"
       >
         <i class="fas fa-save"></i><span>保存</span>
       </button>
       <button
         onclick="handleCancelEdit()"
+        data-layout-id="button-edit-cancel"
         class="px-4 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-sm hover:bg-red-500/30 transition flex items-center gap-1"
       >
         <i class="fas fa-times"></i><span>取消</span>
       </button>
       <button
+        onclick="handleResetLayout()"
+        data-layout-id="button-edit-reset"
+        class="px-4 py-1.5 rounded-lg bg-amber-500/20 text-amber-300 text-sm hover:bg-amber-500/30 transition flex items-center gap-1"
+      >
+        <i class="fas fa-rotate-left"></i><span>重置布局</span>
+      </button>
+      <button
         onclick="handleLogout()"
+        data-layout-id="button-edit-logout"
         class="px-4 py-1.5 rounded-lg bg-white/10 text-sm hover:bg-white/20 transition flex items-center gap-1"
       >
         <i class="fas fa-sign-out-alt"></i><span>退出</span>
@@ -756,6 +723,7 @@
     <!-- Auth Button -->
     <button
       id="authBtn"
+      data-layout-id="button-auth"
       class="auth-btn fixed top-6 right-20 z-50 p-3 rounded-full transition shadow-lg backdrop-blur-md"
       title="进入编辑 / 管理登录"
       onclick="openAuthModal()"
@@ -766,6 +734,7 @@
     <!-- Theme Toggle Button -->
     <button
       id="themeToggle"
+      data-layout-id="button-theme-toggle"
       class="theme-toggle fixed top-6 right-6 z-50 p-3 rounded-full transition shadow-lg backdrop-blur-md flex items-center gap-2"
       title="切换明亮/暗色"
     >
@@ -782,12 +751,14 @@
       <aside
         class="hidden xl:block w-48 flex-shrink-0 pt-32 relative"
         id="timelineContainer"
+        data-layout-id="module-timeline"
       >
         <div class="absolute left-4 top-0 bottom-0 w-[2px] timeline-line"></div>
         <div class="space-y-16 pl-10 relative" id="timelineItems">
           <!-- Timeline items will be loaded from config -->
           <!-- Add Timeline Button -->
           <button
+            data-layout-id="button-add-timeline"
             class="edit-add-btn hidden w-full py-3 rounded-xl text-sm flex items-center justify-center gap-2"
             onclick="addTimelineItem()"
           >
@@ -800,10 +771,13 @@
       <main class="flex-1 flex flex-col md:flex-row gap-10">
         <!-- Profile Sidebar -->
         <div
+          id="profileSidebar"
+          data-layout-id="module-profile-sidebar"
           class="w-full md:w-72 flex-shrink-0 flex flex-col gap-6 items-center md:items-start pt-8 fade-enter-active delay-100"
         >
           <!-- Avatar -->
           <div
+            data-layout-id="module-avatar"
             class="avatar-container relative w-56 h-56 mx-auto md:mx-0 group animate-float"
           >
             <div
@@ -828,11 +802,13 @@
           <div
             class="flex gap-4 justify-center md:justify-start w-full px-2"
             id="socialLinksContainer"
+            data-layout-id="module-social-links"
           >
             <a
               class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative"
               href="#"
               data-editable="social"
+              data-layout-id="social-1"
               data-id="1"
               data-type="image"
             >
@@ -853,6 +829,7 @@
               class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative"
               href="#"
               data-editable="social"
+              data-layout-id="social-2"
               data-id="2"
               data-type="icon"
             >
@@ -868,6 +845,7 @@
               class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative"
               href="#"
               data-editable="social"
+              data-layout-id="social-3"
               data-id="3"
               data-type="icon"
             >
@@ -883,6 +861,7 @@
               class="social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative"
               href="#"
               data-editable="social"
+              data-layout-id="social-4"
               data-id="4"
               data-type="icon"
             >
@@ -896,6 +875,7 @@
             </a>
             <!-- Add Social Link Button -->
             <button
+              data-layout-id="button-add-social"
               class="edit-add-btn hidden w-10 h-10 rounded-full flex items-center justify-center"
               onclick="addSocialLink()"
               title="添加社交链接"
@@ -905,7 +885,11 @@
           </div>
 
           <!-- Info Card -->
-          <div class="w-full glass-panel rounded-2xl p-5" data-editable="info">
+          <div
+            class="w-full glass-panel rounded-2xl p-5"
+            data-editable="info"
+            data-layout-id="module-info-card"
+          >
             <div class="flex items-center gap-3 mb-3">
               <div
                 class="w-6 flex justify-center"
@@ -934,10 +918,12 @@
           <div
             class="w-full glass-panel rounded-2xl p-5 flex flex-wrap gap-2"
             id="tagsContainer"
+            data-layout-id="module-tags"
           >
             <!-- Tags will be loaded from config -->
             <!-- Add Tag Button -->
             <button
+              data-layout-id="button-add-tag"
               class="edit-add-btn hidden px-3 py-1 rounded-lg text-xs font-medium"
               onclick="addTag()"
             >
@@ -950,6 +936,8 @@
         <div class="flex-1 flex flex-col gap-12 fade-enter-active delay-200">
           <!-- Hero Section -->
           <div
+            id="heroSection"
+            data-layout-id="module-hero"
             class="relative pt-4 md:pt-10 pb-4 flex items-center justify-start animate-float-delayed"
           >
             <div class="flex items-center gap-8">
@@ -1072,7 +1060,7 @@
           </div>
 
           <!-- Site Section -->
-          <section class="mt-8">
+          <section class="mt-8" id="siteSection" data-layout-id="module-sites">
             <h2 class="text-2xl font-bold mb-6 flex items-center gap-3 heading">
               <span
                 class="w-1.5 h-6 rounded-full"
@@ -1092,6 +1080,7 @@
               <div
                 class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-300 wobble-hover relative"
                 data-editable="site"
+                data-layout-id="site-1"
                 data-id="1"
                 data-url="#"
               >
@@ -1127,6 +1116,7 @@
               <div
                 class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-400 wobble-hover relative"
                 data-editable="site"
+                data-layout-id="site-2"
                 data-id="2"
                 data-url="#"
               >
@@ -1162,6 +1152,7 @@
               <div
                 class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-500 wobble-hover relative"
                 data-editable="site"
+                data-layout-id="site-3"
                 data-id="3"
                 data-url="#"
               >
@@ -1197,6 +1188,7 @@
               <div
                 class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-600 wobble-hover relative"
                 data-editable="site"
+                data-layout-id="site-4"
                 data-id="4"
                 data-url="#"
               >
@@ -1230,6 +1222,7 @@
               </div>
               <!-- Add Site Card Button -->
               <button
+                data-layout-id="button-add-site"
                 class="edit-add-btn hidden p-5 rounded-2xl min-h-[120px] flex flex-col items-center justify-center gap-2"
                 onclick="addSiteCard()"
               >
@@ -1249,6 +1242,6 @@
       Jovian © 2026
     </footer>
 
-    <script src="/assets/app.js?v=20260130-3" defer></script>
+    <script src="/assets/app.js?v=20260323-4" defer></script>
   </body>
 </html>

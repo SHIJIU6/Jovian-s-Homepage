@@ -1,9 +1,6 @@
 /assets/*
   Cache-Control: public, max-age=0, must-revalidate
 
-/custom.css
-  Cache-Control: public, max-age=0, must-revalidate
-
 /Background.webp
   Cache-Control: public, max-age=31536000, immutable
 

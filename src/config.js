@@ -1,61 +1,70 @@
-/**
- * 配置管理模块
- * 处理网站配置的加载和保存
- */
+import { getAuthHeaders } from "./auth.js";
+import {
+  createDefaultConfig,
+  generateId,
+  normalizeConfig,
+} from "../shared/site-config.js";
 
-import { getAuthHeaders } from './auth.js';
-
-// 加载配置
-export async function loadConfig() {
-  const res = await fetch('/api/config');
-  if (!res.ok) {
-    throw new Error('加载配置失败');
+async function readJson(response, fallback) {
+  try {
+    return await response.json();
+  } catch {
+    return fallback;
   }
-  return await res.json();
 }
 
-// 保存配置
+export { createDefaultConfig, generateId, normalizeConfig };
+
+export async function loadConfig() {
+  const response = await fetch("/api/config");
+  if (!response.ok) {
+    const error = new Error("加载配置失败");
+    error.status = response.status;
+    throw error;
+  }
+
+  const payload = await readJson(response, createDefaultConfig());
+  return normalizeConfig(payload);
+}
+
 export async function saveConfig(config) {
-  const res = await fetch('/api/config', {
-    method: 'POST',
+  const payload = normalizeConfig(config);
+  const response = await fetch("/api/config", {
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      ...getAuthHeaders()
+      "Content-Type": "application/json",
+      ...getAuthHeaders(),
     },
-    body: JSON.stringify(config)
+    body: JSON.stringify(payload),
   });
 
-  const data = await res.json();
-  
-  if (!res.ok) {
-    throw new Error(data.error || '保存失败');
+  const result = await readJson(response, {});
+  if (!response.ok) {
+    const error = new Error(result.error || "保存失败");
+    error.status = response.status;
+    throw error;
   }
 
-  return data;
+  return result;
 }
 
-// 上传图片
 export async function uploadImage(file, type) {
   const formData = new FormData();
-  formData.append('file', file);
-  formData.append('type', type);
+  formData.append("file", file);
+  formData.append("type", type);
 
-  const res = await fetch('/api/upload', {
-    method: 'POST',
+  const response = await fetch("/api/upload", {
+    method: "POST",
     headers: getAuthHeaders(),
-    body: formData
+    body: formData,
   });
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || '上传失败');
+  const result = await readJson(response, {});
+  if (!response.ok) {
+    const error = new Error(result.error || "上传失败");
+    error.status = response.status;
+    throw error;
   }
 
-  return data;
-}
-
-// 生成唯一 ID
-export function generateId() {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  return result;
 }

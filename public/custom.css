@@ -719,6 +719,20 @@
         background: rgba(16, 185, 129, 0.1);
         border-radius: 4px;
       }
+      .edit-mode [data-layout-id].layout-draggable {
+        cursor: grab;
+        touch-action: none;
+        will-change: translate;
+      }
+      .edit-mode [data-layout-id].layout-draggable.layout-dragging {
+        cursor: grabbing;
+        transition: none !important;
+      }
+      .layout-drag-in-progress,
+      .layout-drag-in-progress * {
+        user-select: none !important;
+        -webkit-user-select: none !important;
+      }
       .edit-mode .edit-control {
         position: absolute;
         z-index: 20;
@@ -767,4 +781,351 @@
       /* Make site cards clickable in view mode */
       #sitesContainer [data-editable="site"] {
         cursor: pointer;
+      }
+
+      /* ==============================
+         Handdrawn Theme Component Polish
+         ============================== */
+      :root.theme-handdrawn {
+        --transition-speed: 0.18s;
+        --nb-border-width: 3px;
+        --nb-shadow: 5px 5px 0 0 var(--border-color);
+        --nb-shadow-hover: 8px 8px 0 0 var(--border-color);
+        --nb-shadow-active: 2px 2px 0 0 var(--border-color);
+        --nb-card-paper: #fffdfa;
+        --nb-card-pink: #ffe5ee;
+        --nb-card-yellow: #fff5c9;
+        --nb-card-blue: #e4f3ff;
+        --nb-card-green: #e4f6e5;
+      }
+
+      :root.theme-handdrawn .glass-panel {
+        background: var(--nb-card-paper);
+        border: var(--nb-border-width) solid var(--border-color);
+        border-radius: 1.35rem;
+        box-shadow: var(--nb-shadow);
+      }
+
+      :root.theme-handdrawn .glass-panel:hover {
+        background: var(--bg-panel) !important;
+        transform: translate(-3px, -3px);
+        box-shadow: var(--nb-shadow-hover);
+        border-color: var(--border-color);
+      }
+
+      :root.theme-handdrawn .glass-panel:active {
+        transform: translate(1px, 1px);
+        box-shadow: var(--nb-shadow-active);
+      }
+
+      :root.theme-handdrawn .social-icon,
+      :root.theme-handdrawn .tag,
+      :root.theme-handdrawn .theme-toggle,
+      :root.theme-handdrawn .auth-btn,
+      :root.theme-handdrawn .edit-add-btn,
+      :root.theme-handdrawn .icon-pick-btn,
+      :root.theme-handdrawn .auth-modal button,
+      :root.theme-handdrawn .item-modal button,
+      :root.theme-handdrawn .edit-toolbar button {
+        border: var(--nb-border-width) solid var(--border-color);
+        border-radius: 1rem;
+        box-shadow: 4px 4px 0 0 var(--border-color);
+        transition:
+          transform 0.18s ease,
+          box-shadow 0.18s ease,
+          background-color 0.18s ease,
+          color 0.18s ease,
+          border-color 0.18s ease;
+      }
+
+      :root.theme-handdrawn .social-icon:hover,
+      :root.theme-handdrawn .tag:hover,
+      :root.theme-handdrawn .theme-toggle:hover,
+      :root.theme-handdrawn .auth-btn:hover,
+      :root.theme-handdrawn .edit-add-btn:hover,
+      :root.theme-handdrawn .icon-pick-btn:hover,
+      :root.theme-handdrawn .auth-modal button:hover,
+      :root.theme-handdrawn .item-modal button:hover,
+      :root.theme-handdrawn .edit-toolbar button:hover {
+        transform: translate(-2px, -2px);
+        box-shadow: 6px 6px 0 0 var(--border-color);
+      }
+
+      :root.theme-handdrawn .social-icon:active,
+      :root.theme-handdrawn .tag:active,
+      :root.theme-handdrawn .theme-toggle:active,
+      :root.theme-handdrawn .auth-btn:active,
+      :root.theme-handdrawn .edit-add-btn:active,
+      :root.theme-handdrawn .icon-pick-btn:active,
+      :root.theme-handdrawn .auth-modal button:active,
+      :root.theme-handdrawn .item-modal button:active,
+      :root.theme-handdrawn .edit-toolbar button:active {
+        transform: translate(1px, 1px);
+        box-shadow: 2px 2px 0 0 var(--border-color);
+      }
+
+      :root.theme-handdrawn .wobble-hover:hover {
+        animation: none;
+      }
+
+      :root.theme-handdrawn #sitesContainer > [data-editable="site"]:nth-child(4n + 1) {
+        background: var(--nb-card-pink);
+      }
+
+      :root.theme-handdrawn #sitesContainer > [data-editable="site"]:nth-child(4n + 2) {
+        background: var(--nb-card-yellow);
+      }
+
+      :root.theme-handdrawn #sitesContainer > [data-editable="site"]:nth-child(4n + 3) {
+        background: var(--nb-card-blue);
+      }
+
+      :root.theme-handdrawn #sitesContainer > [data-editable="site"]:nth-child(4n + 4) {
+        background: var(--nb-card-green);
+      }
+
+      :root.theme-handdrawn #sitesContainer [data-editable="site"] {
+        min-height: 144px;
+      }
+
+      :root.theme-handdrawn #sitesContainer [data-editable="site"] [data-field="description"] {
+        color: rgba(45, 45, 45, 0.72) !important;
+      }
+
+      :root.theme-handdrawn .site-card-icon {
+        background: rgba(255, 255, 255, 0.9);
+        border: var(--nb-border-width) solid var(--border-color);
+        border-radius: 0.95rem;
+        box-shadow: 4px 4px 0 0 var(--border-color);
+      }
+
+      :root.theme-handdrawn .site-card-icon.accent {
+        background: var(--nb-card-pink);
+      }
+
+      :root.theme-handdrawn #socialLinksContainer > [data-editable="social"]:nth-child(4n + 1) {
+        background: var(--nb-card-pink);
+      }
+
+      :root.theme-handdrawn #socialLinksContainer > [data-editable="social"]:nth-child(4n + 2) {
+        background: var(--nb-card-yellow);
+      }
+
+      :root.theme-handdrawn #socialLinksContainer > [data-editable="social"]:nth-child(4n + 3) {
+        background: var(--nb-card-blue);
+      }
+
+      :root.theme-handdrawn #socialLinksContainer > [data-editable="social"]:nth-child(4n + 4) {
+        background: var(--nb-card-green);
+      }
+
+      :root.theme-handdrawn .tag {
+        font-weight: 700;
+        border-radius: 0.9rem;
+      }
+
+      :root.theme-handdrawn #tagsContainer > [data-editable="tag"]:nth-child(4n + 1) {
+        background: var(--nb-card-pink);
+      }
+
+      :root.theme-handdrawn #tagsContainer > [data-editable="tag"]:nth-child(4n + 2) {
+        background: var(--nb-card-yellow);
+      }
+
+      :root.theme-handdrawn #tagsContainer > [data-editable="tag"]:nth-child(4n + 3) {
+        background: var(--nb-card-blue);
+      }
+
+      :root.theme-handdrawn #tagsContainer > [data-editable="tag"]:nth-child(4n + 4) {
+        background: var(--nb-card-green);
+      }
+
+      :root.theme-handdrawn .theme-toggle {
+        background: var(--nb-card-yellow);
+      }
+
+      :root.theme-handdrawn .auth-btn {
+        background: var(--nb-card-blue);
+      }
+
+      :root.theme-handdrawn .auth-btn.authenticated {
+        background: var(--nb-card-green);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+      }
+
+      :root.theme-handdrawn .edit-add-btn {
+        background: #ffffff;
+        border-style: solid;
+        color: var(--text-primary);
+      }
+
+      :root.theme-handdrawn .auth-modal .auth-dialog,
+      :root.theme-handdrawn .item-modal .item-dialog {
+        background: var(--nb-card-paper);
+        border-radius: 1.4rem;
+        box-shadow: 10px 10px 0 0 var(--border-color);
+      }
+
+      :root.theme-handdrawn .auth-modal input,
+      :root.theme-handdrawn .item-modal input,
+      :root.theme-handdrawn .item-modal textarea,
+      :root.theme-handdrawn .item-modal select {
+        background: rgba(255, 255, 255, 0.92);
+        border: var(--nb-border-width) solid var(--border-color);
+        border-radius: 0.9rem;
+        box-shadow: 3px 3px 0 0 rgba(45, 45, 45, 0.18);
+      }
+
+      :root.theme-handdrawn .auth-modal input:focus,
+      :root.theme-handdrawn .item-modal input:focus,
+      :root.theme-handdrawn .item-modal textarea:focus,
+      :root.theme-handdrawn .item-modal select:focus {
+        box-shadow:
+          0 0 0 3px rgba(255, 255, 255, 0.85),
+          5px 5px 0 0 var(--border-color);
+        transform: translate(-1px, -1px);
+      }
+
+      :root.theme-handdrawn .auth-modal .flex button:first-child,
+      :root.theme-handdrawn .item-modal .mt-6 button:first-child {
+        background: #ffffff !important;
+      }
+
+      :root.theme-handdrawn .auth-modal .flex button:last-child,
+      :root.theme-handdrawn .item-modal .mt-6 button:last-child {
+        background: var(--nb-card-green) !important;
+        color: var(--text-primary) !important;
+      }
+
+      :root.theme-handdrawn .icon-pick-btn {
+        background: rgba(255, 255, 255, 0.92);
+        border-radius: 0.8rem;
+      }
+
+      :root.theme-handdrawn #siteIconPickerPopup,
+      :root.theme-handdrawn #socialIconPickerPopup {
+        background: var(--nb-card-paper);
+        border: var(--nb-border-width) solid var(--border-color);
+        box-shadow: 8px 8px 0 0 var(--border-color);
+      }
+
+      :root.theme-handdrawn .edit-toolbar,
+      :root.theme-handdrawn #editToolbar {
+        background: var(--nb-card-paper);
+        border: var(--nb-border-width) solid var(--border-color);
+        border-radius: 1.15rem !important;
+        box-shadow: 8px 8px 0 0 var(--border-color);
+      }
+
+      :root.theme-handdrawn .edit-toolbar:hover,
+      :root.theme-handdrawn #editToolbar:hover {
+        background: var(--nb-card-paper) !important;
+      }
+
+      :root.theme-handdrawn .edit-toolbar button:nth-of-type(1) {
+        background: var(--nb-card-green) !important;
+        color: var(--text-primary);
+      }
+
+      :root.theme-handdrawn .edit-toolbar button:nth-of-type(2) {
+        background: var(--nb-card-pink) !important;
+        color: var(--text-primary);
+      }
+
+      :root.theme-handdrawn .edit-toolbar button:nth-of-type(3) {
+        background: var(--nb-card-yellow) !important;
+        color: var(--text-primary);
+      }
+
+      :root.theme-handdrawn .edit-toolbar button:nth-of-type(4) {
+        background: var(--nb-card-blue) !important;
+        color: var(--text-primary);
+      }
+
+      :root.theme-handdrawn .edit-mode .editable-active {
+        outline: 3px dashed rgba(45, 45, 45, 0.48);
+        outline-offset: 6px;
+      }
+
+      :root.theme-handdrawn .edit-delete-btn {
+        border: 2px solid var(--border-color);
+        box-shadow: 2px 2px 0 0 var(--border-color);
+      }
+
+      @media (max-width: 1024px) {
+        :root.theme-handdrawn .edit-toolbar span {
+          display: none;
+        }
+
+        :root.theme-handdrawn #editToolbar {
+          right: 7.5rem !important;
+          max-width: calc(100vw - 9.5rem);
+        }
+      }
+
+      @media (max-width: 768px) {
+        :root.theme-handdrawn #editToolbar,
+        :root.theme-handdrawn .edit-toolbar {
+          top: auto !important;
+          right: 1rem !important;
+          bottom: 1rem !important;
+          left: 1rem !important;
+          width: calc(100vw - 2rem) !important;
+          max-width: none;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 0.65rem;
+          padding: 0.75rem;
+        }
+
+        :root.theme-handdrawn .edit-toolbar button {
+          flex: 1 1 calc(50% - 0.5rem);
+          justify-content: center;
+        }
+
+        :root.theme-handdrawn .auth-btn,
+        :root.theme-handdrawn .theme-toggle {
+          top: 1rem !important;
+          padding: 0.7rem;
+        }
+
+        :root.theme-handdrawn .auth-btn {
+          right: 4.75rem !important;
+        }
+
+        :root.theme-handdrawn .theme-toggle {
+          right: 1rem !important;
+        }
+
+        :root.theme-handdrawn #socialLinksContainer {
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 0.75rem;
+          padding-inline: 0;
+        }
+
+        :root.theme-handdrawn #sitesContainer [data-editable="site"] {
+          min-height: 132px;
+          padding: 1rem;
+        }
+
+        :root.theme-handdrawn .auth-modal .auth-dialog,
+        :root.theme-handdrawn .item-modal .item-dialog {
+          margin-inline: 1rem;
+          box-shadow: 6px 6px 0 0 var(--border-color);
+        }
+      }
+
+      @media (max-width: 640px) {
+        :root.theme-handdrawn .social-icon,
+        :root.theme-handdrawn .theme-toggle,
+        :root.theme-handdrawn .auth-btn {
+          width: 2.75rem;
+          height: 2.75rem;
+        }
+
+        :root.theme-handdrawn .tag {
+          font-size: 0.72rem;
+        }
       }
