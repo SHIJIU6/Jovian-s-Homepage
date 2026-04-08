@@ -45,10 +45,46 @@ function setIconContent(container, { icon, image, alt }) {
   container.append(iconEl);
 }
 
+function setSocialContent(anchor, link, deleteButton) {
+  anchor.classList.toggle("has-label", Boolean(link.title));
+  anchor.setAttribute("aria-label", link.title || link.href || "Social link");
+
+  anchor.querySelector('[data-field="label"]')?.remove();
+  anchor.querySelector('[data-field="image"]')?.remove();
+  anchor.querySelector('[data-field="icon"]')?.remove();
+
+  if (link.type === "image" && link.image) {
+    const img = document.createElement("img");
+    img.alt = link.title || "Social";
+    img.className = "w-5 h-5 rounded-full object-cover opacity-80";
+    img.src = link.image;
+    img.dataset.field = "image";
+    anchor.insertBefore(img, deleteButton || null);
+  } else {
+    const icon = document.createElement("i");
+    icon.className = normalizeIconClass(link.icon);
+    icon.dataset.field = "icon";
+    anchor.insertBefore(icon, deleteButton || null);
+  }
+
+  if (link.title) {
+    const label = document.createElement("span");
+    label.className = "social-icon-label";
+    label.dataset.field = "label";
+    label.textContent = link.title;
+    anchor.insertBefore(label, deleteButton || null);
+  }
+}
+
 function createPreservedFragment(container) {
   const fragment = document.createDocumentFragment();
   const addButton = container.querySelector(".edit-add-btn");
   return { addButton, fragment };
+}
+
+function setSectionVisible(element, isVisible) {
+  if (!element) return;
+  element.style.display = isVisible ? "" : "none";
 }
 
 export function createTimelineItemElement(item, { index = 0, isEditMode = false } = {}) {
@@ -56,28 +92,24 @@ export function createTimelineItemElement(item, { index = 0, isEditMode = false 
   const isHighlight = Boolean(item.highlight) || index === 0;
   const itemId = item.id || generateId();
 
-  element.className = `relative group fade-left-active delay-${Math.min(index + 1, 6) * 100}`;
+  element.className = `timeline-item relative group fade-left-active delay-${Math.min(index + 1, 6) * 100}`;
   element.dataset.editable = "timeline";
   element.dataset.id = itemId;
   element.dataset.highlight = isHighlight ? "true" : "false";
   element.dataset.layoutId = `timeline-${itemId}`;
 
   const dot = document.createElement("div");
-  dot.className = isHighlight
-    ? "timeline-dot absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full ring-4 ring-black/20 z-10 animate-pulse-glow"
-    : "absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full bg-slate-500 group-hover:bg-white transition-colors z-10 ring-4 ring-black/20";
+  dot.className =
+    "timeline-item__dot timeline-dot absolute -left-[1.8rem] top-1.5 w-3 h-3 rounded-full ring-4 ring-black/20 z-10";
 
   const date = document.createElement("div");
-  date.className = isHighlight
-    ? "text-xs font-bold mb-1 tracking-wider opacity-80"
-    : "text-xs mb-1 tracking-wider";
-  date.style.color = isHighlight ? "var(--accent-color)" : "var(--text-muted)";
+  date.className = "timeline-item__date text-xs mb-1 tracking-wider";
   date.dataset.field = "date";
   date.textContent = item.date;
 
   const title = document.createElement("h4");
   title.className =
-    "text-sm font-semibold group-hover:opacity-80 transition-colors heading";
+    "timeline-item__title text-sm font-semibold transition-colors heading";
   title.dataset.field = "title";
   title.textContent = item.title;
 
@@ -180,7 +212,7 @@ export function createSocialLinkElement(link, { isEditMode = false } = {}) {
   const anchor = document.createElement("a");
   const linkId = link.id || generateId();
   anchor.className =
-    "social-icon w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative";
+    "social-icon h-10 min-w-10 px-0 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-sm relative overflow-hidden";
   anchor.href = link.href || "#";
   anchor.target = "_blank";
   anchor.rel = "noopener noreferrer";
@@ -189,25 +221,12 @@ export function createSocialLinkElement(link, { isEditMode = false } = {}) {
   anchor.dataset.type = link.type || "icon";
   anchor.dataset.layoutId = `social-${linkId}`;
 
-  if (link.type === "image" && link.image) {
-    const img = document.createElement("img");
-    img.alt = "Social";
-    img.className = "w-5 h-5 rounded-full object-cover opacity-80";
-    img.src = link.image;
-    img.dataset.field = "image";
-    anchor.append(img);
-  } else {
-    const icon = document.createElement("i");
-    icon.className = normalizeIconClass(link.icon);
-    icon.dataset.field = "icon";
-    anchor.append(icon);
-  }
-
   const deleteButton = createDeleteButton(
     "edit-delete-btn hidden absolute -right-1 -top-1 w-4 h-4 rounded-full bg-red-500 text-white text-[10px] items-center justify-center",
   );
 
   anchor.append(deleteButton);
+  setSocialContent(anchor, link, deleteButton);
   anchor.classList.toggle("editable-active", isEditMode);
   deleteButton.classList.toggle("hidden", !isEditMode);
   return anchor;
@@ -221,23 +240,7 @@ export function updateSocialLinkElement(target, link) {
   target.rel = "noopener noreferrer";
 
   const deleteButton = target.querySelector(".edit-delete-btn");
-  target.querySelector('[data-field="image"]')?.remove();
-  target.querySelector('[data-field="icon"]')?.remove();
-
-  if (link.type === "image" && link.image) {
-    const img = document.createElement("img");
-    img.alt = "Social";
-    img.className = "w-5 h-5 rounded-full object-cover opacity-80";
-    img.src = link.image;
-    img.dataset.field = "image";
-    target.insertBefore(img, deleteButton || null);
-    return;
-  }
-
-  const icon = document.createElement("i");
-  icon.className = normalizeIconClass(link.icon);
-  icon.dataset.field = "icon";
-  target.insertBefore(icon, deleteButton || null);
+  setSocialContent(target, link, deleteButton);
 }
 
 export function insertSiteCardElement(element) {
@@ -320,9 +323,25 @@ export function renderConfig(config, { isEditMode = false } = {}) {
   const status = document.querySelector('[data-field="status"]');
   const avatar = document.querySelector(".avatar-container img");
   const background = document.querySelector(".theme-bg-dark img");
+  const timelineContainer = document.getElementById("timelineContainer");
+  const tagsContainer = document.getElementById("tagsContainer");
+  const infoCard = document.querySelector('[data-editable="info"]');
+  const locationRow = document.querySelector('[data-info-row="location"]');
+  const statusRow = document.querySelector('[data-info-row="status"]');
 
   if (location) location.textContent = config.info?.location || "";
   if (status) status.textContent = config.info?.status || "";
   if (avatar && config.images?.avatar) avatar.src = config.images.avatar;
   if (background && config.images?.background) background.src = config.images.background;
+
+  const hasTimelineItems = (config.timeline || []).length > 0;
+  const hasTags = (config.tags || []).length > 0;
+  const hasLocation = Boolean(config.info?.location);
+  const hasStatus = Boolean(config.info?.status);
+
+  setSectionVisible(timelineContainer, isEditMode || hasTimelineItems);
+  setSectionVisible(tagsContainer, isEditMode || hasTags);
+  setSectionVisible(locationRow, isEditMode || hasLocation);
+  setSectionVisible(statusRow, isEditMode || hasStatus);
+  setSectionVisible(infoCard, isEditMode || hasLocation || hasStatus);
 }

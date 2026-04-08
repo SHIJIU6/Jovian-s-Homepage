@@ -31,29 +31,22 @@ import { collectLayoutData, syncLayout } from "./layout.js";
 let currentConfig = null;
 let itemModalState = { type: null, mode: null, target: null };
 let itemModalUiWired = false;
+let clockTimer = null;
+let lastClockValue = "";
 
 function showToast(message, type = "info") {
   const toast = document.createElement("div");
-  toast.className =
-    "fixed top-20 right-6 z-[200] px-4 py-3 rounded-xl shadow-lg backdrop-blur-md transition-all duration-300 transform translate-x-full";
-
-  const colors = {
-    success: "bg-green-500/20 text-green-400 border border-green-500/30",
-    error: "bg-red-500/20 text-red-400 border border-red-500/30",
-    info: "bg-white/10 text-white border border-white/20",
-  };
-
-  toast.className += ` ${colors[type] || colors.info}`;
+  toast.className = `app-toast app-toast--${type} fixed top-20 right-6 z-[200]`;
 
   const text = document.createElement("span");
-  text.className = "text-sm font-medium";
+  text.className = "app-toast__text";
   text.textContent = message;
   toast.append(text);
 
   document.body.append(toast);
-  requestAnimationFrame(() => toast.classList.remove("translate-x-full"));
+  requestAnimationFrame(() => toast.classList.add("app-toast--visible"));
   window.setTimeout(() => {
-    toast.classList.add("translate-x-full");
+    toast.classList.remove("app-toast--visible");
     window.setTimeout(() => toast.remove(), 300);
   }, 3000);
 }
@@ -155,16 +148,19 @@ function fillSiteModal(target) {
 
 function fillSocialModal(target) {
   const type = target?.dataset?.type === "image" ? "image" : "icon";
+  const title = target?.querySelector('[data-field="label"]')?.textContent?.trim() || "";
   const href = target?.getAttribute("href") || "#";
   const icon = target?.querySelector('[data-field="icon"]')?.className?.trim() || "fas fa-link";
   const image = target?.querySelector('[data-field="image"]')?.getAttribute("src") || "";
 
   const typeSelect = document.getElementById("socialModalType");
+  const titleInput = document.getElementById("socialModalTitle");
   const hrefInput = document.getElementById("socialModalUrl");
   const iconInput = document.getElementById("socialModalIcon");
   const imageInput = document.getElementById("socialModalImage");
 
   if (typeSelect) typeSelect.value = image ? "image" : type;
+  if (titleInput) titleInput.value = title;
   if (hrefInput) hrefInput.value = href;
   if (iconInput) iconInput.value = icon;
   if (imageInput) imageInput.value = image;
@@ -261,12 +257,14 @@ function createSitePayloadFromModal() {
 
 function createSocialPayloadFromModal() {
   const type = document.getElementById("socialModalType")?.value || "icon";
+  const title = document.getElementById("socialModalTitle")?.value?.trim() || "";
   const href = document.getElementById("socialModalUrl")?.value?.trim() || "#";
   const icon = document.getElementById("socialModalIcon")?.value?.trim() || "fas fa-link";
   const image = document.getElementById("socialModalImage")?.value?.trim() || "";
 
   return {
     type: type === "image" && image ? "image" : "icon",
+    title,
     href,
     icon,
     image,
@@ -465,6 +463,7 @@ async function loadAndRenderConfig() {
 function openAuthModal() {
   if (isAuthenticated()) {
     enableEditMode(currentConfig);
+    renderCurrentConfig(currentConfig, { isEditMode: true });
     refreshLayout();
     return;
   }
@@ -490,6 +489,7 @@ async function handleLogin() {
     await login(password);
     closeAuthModal();
     enableEditMode(currentConfig);
+    renderCurrentConfig(currentConfig, { isEditMode: true });
     refreshLayout();
     showToast("登录成功，已进入编辑模式", "success");
   } catch (error) {
@@ -503,6 +503,7 @@ async function handleLogin() {
 function handleLogout() {
   logout();
   disableEditMode();
+  renderCurrentConfig(currentConfig, { isEditMode: false });
   refreshLayout();
   document.getElementById("authBtn")?.classList.remove("authenticated");
   showToast("已退出登录", "info");
@@ -743,7 +744,7 @@ function setTheme(theme) {
   localStorage.setItem("theme", theme);
 }
 
-function updateClock() {
+function updateClock(force = false) {
   const now = new Date();
   const parts = [
     now.getFullYear(),
@@ -757,10 +758,41 @@ function updateClock() {
   ];
   const value = `${parts.join("-")} ${time.join(":")}`;
 
+  if (!force && value === lastClockValue) {
+    return;
+  }
+  lastClockValue = value;
+
   const clock = document.getElementById("clock");
   const reflection = document.getElementById("clock-reflection");
   if (clock) clock.textContent = value;
   if (reflection) reflection.textContent = value;
+}
+
+function stopClockUpdates() {
+  if (!clockTimer) return;
+  window.clearInterval(clockTimer);
+  clockTimer = null;
+}
+
+function startClockUpdates() {
+  stopClockUpdates();
+  updateClock(true);
+
+  if (document.hidden) {
+    return;
+  }
+
+  clockTimer = window.setInterval(() => updateClock(), 1000);
+}
+
+function handleVisibilityChange() {
+  if (document.hidden) {
+    stopClockUpdates();
+    return;
+  }
+
+  startClockUpdates();
 }
 
 function initializeTheme() {
@@ -783,8 +815,8 @@ function bootstrap() {
   wireLinkInteractions();
   initializeTheme();
   initializeAuthUi();
-  updateClock();
-  window.setInterval(updateClock, 1000);
+  startClockUpdates();
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 
   syncCurrentConfigFromDom();
   setOriginalConfig(currentConfig);

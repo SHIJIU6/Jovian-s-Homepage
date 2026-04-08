@@ -20,13 +20,7 @@ const LIMITS = Object.freeze({
   layoutOffset: 4096,
 });
 
-const DEFAULT_TIMELINE = Object.freeze([
-  { id: "1", date: "2025.3", title: "28岁啦", highlight: true },
-  { id: "2", date: "2025.1", title: "参演《星星闪耀的夜晚》", highlight: false },
-  { id: "3", date: "2024.3", title: "参演《某人的复活》", highlight: false },
-  { id: "4", date: "2021.3", title: "参演《今天开始契约恋爱》", highlight: false },
-  { id: "5", date: "2019.1", title: "在 Cherry Bullet 出道", highlight: false },
-]);
+const DEFAULT_TIMELINE = Object.freeze([]);
 
 const DEFAULT_SITES = Object.freeze([
   {
@@ -71,21 +65,13 @@ const DEFAULT_SITES = Object.freeze([
   },
 ]);
 
-const DEFAULT_TAGS = Object.freeze([
-  "Kpop",
-  "Currently employed",
-  "Cherry Bullet",
-  "1997.3.5",
-  "Singer",
-  "Dancer",
-  "FNC",
-  "지원",
-]);
+const DEFAULT_TAGS = Object.freeze([]);
 
 const DEFAULT_SOCIAL_LINKS = Object.freeze([
   {
     id: "1",
     type: "image",
+    title: "",
     href: "#",
     icon: "",
     image:
@@ -94,6 +80,7 @@ const DEFAULT_SOCIAL_LINKS = Object.freeze([
   {
     id: "2",
     type: "icon",
+    title: "",
     href: "#",
     icon: "fab fa-telegram-plane",
     image: "",
@@ -101,6 +88,7 @@ const DEFAULT_SOCIAL_LINKS = Object.freeze([
   {
     id: "3",
     type: "icon",
+    title: "",
     href: "#",
     icon: "fab fa-github",
     image: "",
@@ -108,6 +96,7 @@ const DEFAULT_SOCIAL_LINKS = Object.freeze([
   {
     id: "4",
     type: "icon",
+    title: "",
     href: "#",
     icon: "fas fa-envelope",
     image: "",
@@ -115,8 +104,8 @@ const DEFAULT_SOCIAL_LINKS = Object.freeze([
 ]);
 
 const DEFAULT_INFO = Object.freeze({
-  location: "ShenZhen",
-  status: "Currently employed",
+  location: "",
+  status: "",
 });
 
 const DEFAULT_IMAGES = Object.freeze({
@@ -198,6 +187,7 @@ function normalizeSocialLink(item) {
   return {
     id: trimString(item?.id, generateId(), LIMITS.title),
     type: image ? "image" : "icon",
+    title: trimString(item?.title, "", LIMITS.title),
     href: normalizeUrl(item?.href || item?.url, "#"),
     icon: normalizeIconClass(item?.icon, "fas fa-link"),
     image,

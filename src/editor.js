@@ -138,10 +138,8 @@ export function collectEditedData({ generateId }) {
   });
 
   data.info = {
-    location: document.querySelector('[data-field="location"]')?.textContent?.trim() || "ShenZhen",
-    status:
-      document.querySelector('[data-field="status"]')?.textContent?.trim() ||
-      "Currently employed",
+    location: document.querySelector('[data-field="location"]')?.textContent?.trim() || "",
+    status: document.querySelector('[data-field="status"]')?.textContent?.trim() || "",
   };
 
   data.images = {
@@ -154,6 +152,7 @@ export function collectEditedData({ generateId }) {
     data.socialLinks.push({
       id: element.dataset.id || generateId(),
       type,
+      title: element.querySelector('[data-field="label"]')?.textContent?.trim() || "",
       href: element.getAttribute("href") || "#",
       icon: element.querySelector('[data-field="icon"]')?.className || "fas fa-link",
       image: element.querySelector('[data-field="image"]')?.getAttribute("src") || "",
