@@ -27,12 +27,29 @@ import {
   updateSocialLinkElement,
 } from "./render.js";
 import { collectLayoutData, syncLayout } from "./layout.js";
+import { startCosmicBackground, stopCosmicBackground } from "./cosmic-background.js";
 
 let currentConfig = null;
 let itemModalState = { type: null, mode: null, target: null };
 let itemModalUiWired = false;
 let clockTimer = null;
 let lastClockValue = "";
+const THEME_STORAGE_KEY = "theme";
+const THEME_MIGRATION_KEY = "theme-default-migration";
+const THEME_MIGRATION_VERSION = "2026-04-24-dawn";
+
+function getInitialTheme() {
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
+  const hasMigrated = localStorage.getItem(THEME_MIGRATION_KEY) === THEME_MIGRATION_VERSION;
+
+  if (!hasMigrated) {
+    localStorage.setItem(THEME_STORAGE_KEY, "handdrawn");
+    localStorage.setItem(THEME_MIGRATION_KEY, THEME_MIGRATION_VERSION);
+    return "handdrawn";
+  }
+
+  return savedTheme === "dark" ? "dark" : "handdrawn";
+}
 
 function showToast(message, type = "info") {
   const toast = document.createElement("div");
@@ -735,13 +752,16 @@ function setTheme(theme) {
     root.classList.add("theme-handdrawn");
     darkIcon?.classList.add("hidden");
     handdrawnIcon?.classList.remove("hidden");
+    stopCosmicBackground();
   } else {
     root.classList.remove("theme-handdrawn");
     darkIcon?.classList.remove("hidden");
     handdrawnIcon?.classList.add("hidden");
+    startCosmicBackground();
   }
 
-  localStorage.setItem("theme", theme);
+  localStorage.setItem(THEME_STORAGE_KEY, theme);
+  localStorage.setItem(THEME_MIGRATION_KEY, THEME_MIGRATION_VERSION);
 }
 
 function updateClock(force = false) {
@@ -796,7 +816,7 @@ function handleVisibilityChange() {
 }
 
 function initializeTheme() {
-  setTheme(localStorage.getItem("theme") || "dark");
+  setTheme(getInitialTheme());
   document.getElementById("themeToggle")?.addEventListener("click", () => {
     const nextTheme = document.documentElement.classList.contains("theme-handdrawn")
       ? "dark"

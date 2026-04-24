@@ -1,5 +1,5 @@
 ﻿<!doctype html>
-<html class="dark" lang="en">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
@@ -10,6 +10,30 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <script>
+      (() => {
+        const themeKey = "theme";
+        const migrationKey = "theme-default-migration";
+        const migrationVersion = "2026-04-24-dawn";
+
+        try {
+          const savedTheme = localStorage.getItem(themeKey);
+          if (localStorage.getItem(migrationKey) !== migrationVersion) {
+            localStorage.setItem(themeKey, "handdrawn");
+            localStorage.setItem(migrationKey, migrationVersion);
+          } else if (savedTheme !== "dark") {
+            localStorage.setItem(themeKey, "handdrawn");
+          }
+
+          document.documentElement.classList.toggle(
+            "theme-handdrawn",
+            localStorage.getItem(themeKey) !== "dark"
+          );
+        } catch {
+          document.documentElement.classList.add("theme-handdrawn");
+        }
+      })();
+    </script>
     <link href="/assets/styles.css?v=20260323-4" rel="stylesheet" />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -36,15 +60,16 @@
     <div class="theme-bg-dark fixed inset-0 -z-10">
       <img
         alt="Background"
-        class="w-full h-full object-cover opacity-60"
+        class="w-full h-full object-cover opacity-25"
         decoding="async"
         fetchpriority="low"
         src="Background.webp"
       />
-      <div class="absolute inset-0 bg-[#0f0c1a]/70 backdrop-blur-[2px]"></div>
+      <div class="absolute inset-0 bg-[#070b18]/80 backdrop-blur-[1px]"></div>
       <div
-        class="absolute top-[-20%] left-[50%] -translate-x-1/2 w-[800px] h-[600px] bg-white/5 rounded-full blur-[120px] pointer-events-none"
+        class="absolute top-[-20%] left-[50%] -translate-x-1/2 w-[800px] h-[600px] bg-cyan-300/10 rounded-full blur-[120px] pointer-events-none"
       ></div>
+      <div class="theme-bg-dark__stars" aria-hidden="true"></div>
     </div>
     <div class="theme-bg-handdrawn"></div>
 
@@ -756,6 +781,17 @@
         ><i class="fas fa-sun"></i
       ></span>
     </button>
+    <script>
+      (() => {
+        try {
+          const theme = localStorage.getItem("theme") === "dark" ? "dark" : "handdrawn";
+          const darkIcon = document.querySelector(".theme-icon-dark");
+          const handdrawnIcon = document.querySelector(".theme-icon-handdrawn");
+          if (darkIcon) darkIcon.classList.toggle("hidden", theme !== "dark");
+          if (handdrawnIcon) handdrawnIcon.classList.toggle("hidden", theme === "dark");
+        } catch {}
+      })();
+    </script>
 
     <div
       class="flex-1 relative z-10 max-w-7xl mx-auto px-6 py-12 flex flex-col lg:flex-row gap-16"
@@ -1092,7 +1128,7 @@
             >
               <!-- Site Card 1 -->
               <div
-                class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-300 wobble-hover relative"
+                class="group block p-5 rounded-2xl glass-panel fade-enter-active delay-300 wobble-hover relative"
                 data-editable="site"
                 data-layout-id="site-1"
                 data-id="1"
@@ -1100,7 +1136,7 @@
               >
                 <div class="flex justify-between items-start mb-3">
                   <h3
-                    class="font-bold text-lg group-hover:opacity-80 transition-colors heading"
+                    class="font-bold text-lg group-hover:opacity-80 transition-opacity heading"
                     data-field="title"
                   >
                     博客
@@ -1128,7 +1164,7 @@
               </div>
               <!-- Site Card 2 -->
               <div
-                class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-400 wobble-hover relative"
+                class="group block p-5 rounded-2xl glass-panel fade-enter-active delay-400 wobble-hover relative"
                 data-editable="site"
                 data-layout-id="site-2"
                 data-id="2"
@@ -1136,7 +1172,7 @@
               >
                 <div class="flex justify-between items-start mb-3">
                   <h3
-                    class="font-bold text-lg group-hover:opacity-80 transition-colors heading"
+                    class="font-bold text-lg group-hover:opacity-80 transition-opacity heading"
                     data-field="title"
                   >
                     云盘
@@ -1164,7 +1200,7 @@
               </div>
               <!-- Site Card 3 -->
               <div
-                class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-500 wobble-hover relative"
+                class="group block p-5 rounded-2xl glass-panel fade-enter-active delay-500 wobble-hover relative"
                 data-editable="site"
                 data-layout-id="site-3"
                 data-id="3"
@@ -1172,7 +1208,7 @@
               >
                 <div class="flex justify-between items-start mb-3">
                   <h3
-                    class="font-bold text-lg group-hover:opacity-80 transition-colors heading"
+                    class="font-bold text-lg group-hover:opacity-80 transition-opacity heading"
                     data-field="title"
                   >
                     文件箱
@@ -1200,7 +1236,7 @@
               </div>
               <!-- Site Card 4 -->
               <div
-                class="group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-600 wobble-hover relative"
+                class="group block p-5 rounded-2xl glass-panel fade-enter-active delay-600 wobble-hover relative"
                 data-editable="site"
                 data-layout-id="site-4"
                 data-id="4"
@@ -1208,7 +1244,7 @@
               >
                 <div class="flex justify-between items-start mb-3">
                   <h3
-                    class="font-bold text-lg group-hover:opacity-80 transition-colors heading"
+                    class="font-bold text-lg group-hover:opacity-80 transition-opacity heading"
                     data-field="title"
                   >
                     待建

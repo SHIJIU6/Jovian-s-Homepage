@@ -145,7 +145,7 @@ export function createTagElement(tag, { index = 0, isEditMode = false } = {}) {
 export function createSiteCardElement(site, { index = 0, isEditMode = false } = {}) {
   const card = document.createElement("div");
   const siteId = site.id || generateId();
-  card.className = `group block p-5 rounded-2xl glass-panel hover:-translate-y-1 transition-transform duration-300 fade-enter-active delay-${Math.min(index + 3, 6) * 100} wobble-hover relative`;
+  card.className = `group block p-5 rounded-2xl glass-panel fade-enter-active delay-${Math.min(index + 3, 6) * 100} wobble-hover relative`;
   card.dataset.editable = "site";
   card.dataset.id = siteId;
   card.dataset.url = site.url || "#";
@@ -157,7 +157,7 @@ export function createSiteCardElement(site, { index = 0, isEditMode = false } = 
   header.className = "flex justify-between items-start mb-3";
 
   const title = document.createElement("h3");
-  title.className = "font-bold text-lg group-hover:opacity-80 transition-colors heading";
+  title.className = "font-bold text-lg group-hover:opacity-80 transition-opacity heading";
   title.dataset.field = "title";
   title.textContent = site.title;
 

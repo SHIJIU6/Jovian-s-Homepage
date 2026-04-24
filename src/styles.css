@@ -2007,3 +2007,66 @@
           justify-content: center;
         }
       }
+
+      #sitesContainer > [data-editable="site"] {
+        --site-card-bg: var(--nb-cream);
+        --site-card-bg-hover: var(--site-card-bg);
+        background: var(--site-card-bg) !important;
+        transition:
+          background-color 160ms ease,
+          border-color 160ms ease,
+          box-shadow 160ms ease,
+          color 160ms ease !important;
+        transform: none !important;
+        animation: none !important;
+        will-change: auto !important;
+      }
+
+      #sitesContainer > [data-editable="site"]:nth-child(4n + 1) {
+        --site-card-bg: var(--nb-pink);
+        --site-card-bg-hover: #ffc0e7;
+      }
+
+      #sitesContainer > [data-editable="site"]:nth-child(4n + 2) {
+        --site-card-bg: var(--nb-yellow);
+        --site-card-bg-hover: #ffe689;
+      }
+
+      #sitesContainer > [data-editable="site"]:nth-child(4n + 3) {
+        --site-card-bg: var(--nb-blue);
+        --site-card-bg-hover: #a9e2ff;
+      }
+
+      #sitesContainer > [data-editable="site"]:nth-child(4n) {
+        --site-card-bg: var(--nb-green);
+        --site-card-bg-hover: #c8f68f;
+      }
+
+      #sitesContainer > [data-editable="site"]:hover,
+      #sitesContainer > [data-editable="site"]:focus,
+      #sitesContainer > [data-editable="site"]:focus-visible,
+      #sitesContainer > [data-editable="site"]:active,
+      :root.theme-handdrawn .glass-panel[data-editable="site"]:hover,
+      :root.theme-handdrawn .glass-panel[data-editable="site"]:focus,
+      :root.theme-handdrawn .glass-panel[data-editable="site"]:focus-visible,
+      :root.theme-handdrawn .glass-panel[data-editable="site"]:active,
+      :root.theme-handdrawn #sitesContainer > [data-editable="site"]:hover,
+      :root.theme-handdrawn #sitesContainer > [data-editable="site"]:focus,
+      :root.theme-handdrawn #sitesContainer > [data-editable="site"]:focus-visible,
+      :root.theme-handdrawn #sitesContainer > [data-editable="site"]:active {
+        background: var(--site-card-bg-hover) !important;
+        border-color: var(--border-color) !important;
+        box-shadow: var(--nb-shadow-hover) !important;
+        transform: none !important;
+        animation: none !important;
+        z-index: auto !important;
+        filter: none !important;
+      }
+
+      #sitesContainer > [data-editable="site"]:hover .site-card-icon,
+      #sitesContainer > [data-editable="site"]:focus-visible .site-card-icon,
+      :root.theme-handdrawn #sitesContainer > [data-editable="site"]:hover .site-card-icon,
+      :root.theme-handdrawn #sitesContainer > [data-editable="site"]:focus-visible .site-card-icon {
+        background: rgba(255, 255, 255, 0.96) !important;
+        box-shadow: 6px 6px 0 0 var(--nb-ink) !important;
+      }
