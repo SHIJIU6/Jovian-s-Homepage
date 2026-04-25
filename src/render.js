@@ -76,6 +76,40 @@ function setSocialContent(anchor, link, deleteButton) {
   }
 }
 
+function getSocialExpandedWidth(anchor) {
+  const label = anchor.querySelector(".social-icon-label");
+  const media = anchor.querySelector('[data-field="icon"], [data-field="image"]');
+  if (!label || !media) return anchor.offsetWidth;
+
+  const style = window.getComputedStyle(anchor);
+  const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+  const expandedGap = 12;
+  return Math.ceil(media.offsetWidth + label.scrollWidth + padding + expandedGap);
+}
+
+function updateSocialWrapExpansion(anchor) {
+  const container = anchor?.parentElement;
+  if (!container || !anchor.classList.contains("has-label")) return;
+
+  const currentLeft = anchor.offsetLeft;
+  const availableWidth = container.clientWidth - currentLeft;
+  const expandedWidth = getSocialExpandedWidth(anchor);
+  const shouldWrap = expandedWidth > availableWidth && expandedWidth <= container.clientWidth;
+
+  if (!shouldWrap || anchor.previousElementSibling?.classList.contains("social-line-break")) return;
+
+  const lineBreak = document.createElement("span");
+  lineBreak.className = "social-line-break";
+  lineBreak.setAttribute("aria-hidden", "true");
+  container.insertBefore(lineBreak, anchor);
+}
+
+function updateSocialLayoutBreaks(container) {
+  if (!container) return;
+  container.querySelectorAll(".social-line-break").forEach((lineBreak) => lineBreak.remove());
+  container.querySelectorAll(".social-icon.has-label").forEach((anchor) => updateSocialWrapExpansion(anchor));
+}
+
 function createPreservedFragment(container) {
   const fragment = document.createDocumentFragment();
   const addButton = container.querySelector(".edit-add-btn");
@@ -241,6 +275,7 @@ export function updateSocialLinkElement(target, link) {
 
   const deleteButton = target.querySelector(".edit-delete-btn");
   setSocialContent(target, link, deleteButton);
+  requestAnimationFrame(() => updateSocialLayoutBreaks(target.parentElement));
 }
 
 export function insertSiteCardElement(element) {
@@ -260,9 +295,11 @@ export function insertSocialLinkElement(element) {
   const addButton = container.querySelector(".edit-add-btn");
   if (addButton) {
     container.insertBefore(element, addButton);
+    requestAnimationFrame(() => updateSocialLayoutBreaks(container));
     return;
   }
   container.append(element);
+  requestAnimationFrame(() => updateSocialLayoutBreaks(container));
 }
 
 export function renderTimeline(timeline, { isEditMode = false } = {}) {
@@ -311,6 +348,7 @@ export function renderSocialLinks(socialLinks, { isEditMode = false } = {}) {
   });
   if (addButton) fragment.append(addButton);
   container.replaceChildren(fragment);
+  requestAnimationFrame(() => updateSocialLayoutBreaks(container));
 }
 
 export function renderConfig(config, { isEditMode = false } = {}) {

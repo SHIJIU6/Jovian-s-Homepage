@@ -702,6 +702,11 @@
         gap: 0.45rem;
         padding-right: 0.95rem;
       }
+      .social-line-break {
+        flex-basis: 100%;
+        height: 0;
+        pointer-events: none;
+      }
       .social-icon.has-label:hover .social-icon-label,
       .social-icon.has-label:focus-visible .social-icon-label {
         max-width: calc(100vw - 6rem);
