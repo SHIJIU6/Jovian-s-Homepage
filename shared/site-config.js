@@ -6,6 +6,7 @@
 const LIMITS = Object.freeze({
   timeline: 20,
   sites: 16,
+  magicCards: 12,
   tags: 24,
   socialLinks: 12,
   layoutEntries: 128,
@@ -62,6 +63,30 @@ const DEFAULT_SITES = Object.freeze([
     accent: true,
     iconType: "icon",
     image: "",
+  },
+]);
+
+const DEFAULT_MAGIC_CARDS = Object.freeze([
+  {
+    id: "magic-aurora",
+    title: "Aurora Notes",
+    description: "把灵感、图片与作品收进一张会发光的卡片。",
+    image: "Background.webp",
+    url: "#",
+  },
+  {
+    id: "magic-studio",
+    title: "Jovian Studio",
+    description: "上传自己的封面，为每一段链接加上视觉记忆。",
+    image: "touxiang.jpg",
+    url: "https://github.com/SHIJIU6/Jovian-s-Homepage",
+  },
+  {
+    id: "magic-next",
+    title: "Next Trick",
+    description: "下一张卡片，等待新的故事被翻开。",
+    image: "",
+    url: "#",
   },
 ]);
 
@@ -162,6 +187,39 @@ function normalizeTimelineItem(item, index = 0) {
   };
 }
 
+function parseTimelineDate(value) {
+  const match = String(value || "")
+    .trim()
+    .match(/^(\d{4})[./-](\d{1,2})(?:[./-](\d{1,2}))?$/);
+  if (!match) return null;
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3] || 1);
+  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+
+  return year * 10000 + month * 100 + day;
+}
+
+function sortTimelineItems(items) {
+  return items
+    .map((item, index) => ({
+      item,
+      index,
+      dateValue: parseTimelineDate(item.date),
+    }))
+    .sort((left, right) => {
+      const leftHasDate = left.dateValue !== null;
+      const rightHasDate = right.dateValue !== null;
+
+      if (leftHasDate !== rightHasDate) return leftHasDate ? 1 : -1;
+      if (!leftHasDate) return left.index - right.index;
+
+      return right.dateValue - left.dateValue || left.index - right.index;
+    })
+    .map(({ item }) => item);
+}
+
 function normalizeSiteItem(item) {
   const image = normalizeUrl(item?.image, "");
   const iconType = image ? "image" : "icon";
@@ -174,6 +232,16 @@ function normalizeSiteItem(item) {
     accent: toBoolean(item?.accent),
     iconType,
     image,
+  };
+}
+
+function normalizeMagicCard(item) {
+  return {
+    id: trimString(item?.id, generateId(), LIMITS.title),
+    title: trimString(item?.title, "魔术卡片", LIMITS.title),
+    description: trimString(item?.description, "", LIMITS.description),
+    image: normalizeUrl(item?.image, ""),
+    url: normalizeUrl(item?.url || item?.href, "#"),
   };
 }
 
@@ -221,6 +289,7 @@ export function createDefaultConfig() {
   return {
     timeline: DEFAULT_TIMELINE.map((item, index) => normalizeTimelineItem(item, index)),
     sites: DEFAULT_SITES.map((item) => normalizeSiteItem(item)),
+    magicCards: DEFAULT_MAGIC_CARDS.map((item) => normalizeMagicCard(item)),
     tags: DEFAULT_TAGS.map((tag) => normalizeTag(tag)).filter(Boolean),
     info: {
       location: DEFAULT_INFO.location,
@@ -242,16 +311,24 @@ export function normalizeConfig(config) {
 
   const timelineInput = Array.isArray(config.timeline) ? config.timeline : defaults.timeline;
   const sitesInput = Array.isArray(config.sites) ? config.sites : defaults.sites;
+  const magicCardsInput = Array.isArray(config.magicCards)
+    ? config.magicCards
+    : defaults.magicCards;
   const tagsInput = Array.isArray(config.tags) ? config.tags : defaults.tags;
   const socialInput = Array.isArray(config.socialLinks)
     ? config.socialLinks
     : defaults.socialLinks;
 
   return {
-    timeline: timelineInput
-      .slice(0, LIMITS.timeline)
-      .map((item, index) => normalizeTimelineItem(item, index)),
+    timeline: sortTimelineItems(
+      timelineInput
+        .slice(0, LIMITS.timeline)
+        .map((item, index) => normalizeTimelineItem(item, index)),
+    ),
     sites: sitesInput.slice(0, LIMITS.sites).map((item) => normalizeSiteItem(item)),
+    magicCards: magicCardsInput
+      .slice(0, LIMITS.magicCards)
+      .map((item) => normalizeMagicCard(item)),
     tags: tagsInput
       .slice(0, LIMITS.tags)
       .map((tag) => normalizeTag(tag))

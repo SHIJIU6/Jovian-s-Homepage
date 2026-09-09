@@ -99,6 +99,7 @@ export function collectEditedData({ generateId }) {
   const data = {
     timeline: [],
     sites: [],
+    magicCards: [],
     tags: [],
     info: {},
     images: {},
@@ -129,6 +130,17 @@ export function collectEditedData({ generateId }) {
       iconType: element.querySelector('[data-field="icon"] img') ? "image" : "icon",
       url: element.dataset.url || "#",
       accent: element.querySelector('[data-field="icon"]')?.classList.contains("accent") || false,
+    });
+  });
+
+  document.querySelectorAll('[data-editable="magic-card"]').forEach((element) => {
+    data.magicCards.push({
+      id: element.dataset.id || generateId(),
+      title: element.querySelector('[data-field="title"]')?.textContent?.trim() || "魔术卡片",
+      description:
+        element.querySelector('[data-field="description"]')?.textContent?.trim() || "",
+      image: element.querySelector('[data-field="image"]')?.getAttribute("src") || "",
+      url: element.dataset.url || "#",
     });
   });
 

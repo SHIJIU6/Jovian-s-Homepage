@@ -7,7 +7,13 @@ import { jsonResponse, requireAuth } from "./_utils.js";
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"]);
-const ALLOWED_UPLOAD_TARGETS = new Set(["avatar", "background", "siteicon", "socialicon"]);
+const ALLOWED_UPLOAD_TARGETS = new Set([
+  "avatar",
+  "background",
+  "siteicon",
+  "socialicon",
+  "magic-card",
+]);
 const EXTENSION_BY_TYPE = {
   "image/jpeg": "jpg",
   "image/png": "png",

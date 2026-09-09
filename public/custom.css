@@ -1704,3 +1704,900 @@
         background: rgba(255, 255, 255, 0.96) !important;
         box-shadow: 6px 6px 0 0 var(--nb-ink) !important;
       }
+
+      /* ==============================
+         Magic Card Fan Deck
+         ============================== */
+      body.magic-viewer-open {
+        overflow: hidden;
+      }
+
+      .magic-section {
+        position: relative;
+        width: min(100%, 80rem);
+        margin: 0 auto;
+        padding: 0 1.5rem;
+        overflow: visible;
+      }
+
+      @media (min-width: 1024px) {
+        .magic-section.magic-section--peek {
+          position: fixed;
+          left: 50%;
+          bottom: -8rem;
+          z-index: 80;
+          margin: 0;
+          pointer-events: none;
+          transform: translate(-50%, 2.5rem);
+          opacity: 0;
+          transition:
+            opacity 0.55s ease,
+            transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .magic-section.magic-section--peek.magic-section--peek-visible {
+          transform: translate(-50%, 0);
+          opacity: 1;
+        }
+
+        .magic-section.magic-section--peek #magicCardsContainer {
+          pointer-events: auto;
+        }
+
+        .magic-section.magic-section--peek #magicCardsContainer .magic-card.magic-card--active,
+        .magic-section.magic-section--peek #magicCardsContainer .magic-card:hover,
+        .magic-section.magic-section--peek #magicCardsContainer .magic-card:focus-visible {
+          z-index: 160;
+          transform: translateX(-50%) translateX(var(--fan-x, 0px))
+            translateY(calc(var(--fan-y, 0px) - 4.75rem))
+            rotate(var(--fan-angle, 0deg)) scale(1.045);
+        }
+      }
+
+      .magic-section__header {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      .edit-mode .magic-section__header {
+        position: relative;
+        width: auto;
+        height: auto;
+        margin-bottom: 0.5rem;
+        overflow: visible;
+        clip-path: none;
+        text-align: center;
+        white-space: normal;
+      }
+
+      .magic-section__header > div:first-child {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      .magic-section__kicker {
+        margin-bottom: 0.2rem;
+        color: var(--accent-color);
+        font-size: 0.58rem;
+        letter-spacing: 0.2em;
+      }
+
+      .magic-section__title {
+        gap: 0.4rem;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .magic-section__description {
+        margin-top: 0.25rem;
+        color: var(--text-muted);
+        font-size: 0.72rem;
+      }
+
+      .magic-section__sigil {
+        display: none;
+      }
+
+      .magic-cards-grid {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: clamp(14rem, 21vw, 18rem);
+        margin: 0 auto;
+        padding: 0;
+        overflow: visible;
+        perspective: 1400px;
+        isolation: isolate;
+      }
+
+      .magic-cards-grid::before {
+        content: "";
+        position: absolute;
+        right: 20%;
+        bottom: 0.8rem;
+        left: 20%;
+        height: 2rem;
+        border-radius: 50%;
+        background: rgba(66, 188, 222, 0.18);
+        filter: blur(22px);
+        pointer-events: none;
+      }
+
+      .magic-cards-grid::after {
+        content: "";
+        position: absolute;
+        right: 42%;
+        bottom: 0.45rem;
+        left: 42%;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, currentColor, transparent);
+        opacity: 0.18;
+        pointer-events: none;
+      }
+
+      @keyframes magic-card-fan-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      #magicCardsContainer .magic-card {
+        position: absolute;
+        right: auto;
+        bottom: 0.8rem;
+        left: 50%;
+        display: block;
+        width: clamp(7.8rem, 12vw, 10.6rem);
+        height: clamp(11.5rem, 17vw, 14.8rem);
+        min-height: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        border: 1.5px solid rgba(34, 39, 48, 0.62);
+        border-radius: 1rem 0.9rem 1.1rem 0.8rem;
+        background: rgba(255, 255, 255, 0.16);
+        box-shadow: 0 15px 28px rgba(23, 35, 46, 0.12);
+        cursor: default;
+        transform: translateX(-50%) translateX(var(--fan-x, 0px))
+          translateY(var(--fan-y, 0px)) rotate(var(--fan-angle, 0deg));
+        transform-origin: 50% 100%;
+        animation: magic-card-fan-in 0.65s cubic-bezier(0.16, 1, 0.3, 1)
+          var(--magic-delay, 0ms) both;
+        backface-visibility: hidden;
+        isolation: isolate;
+        transition:
+          transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+          filter 0.35s ease,
+          opacity 0.35s ease,
+          box-shadow 0.35s ease,
+          border-color 0.35s ease;
+        will-change: transform;
+      }
+
+      #magicCardsContainer .magic-card::before {
+        content: "";
+        position: absolute;
+        inset: 0.55rem;
+        z-index: 4;
+        border: 1px solid currentColor;
+        border-radius: 0.68rem 0.58rem 0.78rem 0.5rem;
+        opacity: 0.22;
+        pointer-events: none;
+      }
+
+      #magicCardsContainer .magic-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.24), transparent 36%),
+          linear-gradient(315deg, rgba(64, 193, 220, 0.1), transparent 45%);
+        pointer-events: none;
+      }
+
+      #magicCardsContainer .magic-card__media {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        height: auto;
+        flex: none;
+        overflow: hidden;
+        border-radius: inherit;
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(77, 150, 172, 0.08));
+      }
+
+      #magicCardsContainer .magic-card__image {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.24;
+        filter: saturate(0.78) contrast(0.92);
+        mix-blend-mode: multiply;
+        transition:
+          opacity 0.45s ease,
+          filter 0.45s ease,
+          transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: zoom-in;
+      }
+
+      #magicCardsContainer .magic-card__placeholder {
+        display: grid;
+        width: 100%;
+        height: 100%;
+        place-items: center;
+        color: currentColor;
+        opacity: 0.18;
+      }
+
+      #magicCardsContainer .magic-card__placeholder i {
+        font-size: 1.5rem;
+      }
+
+      #magicCardsContainer .magic-card__sheen {
+        position: absolute;
+        inset: -35%;
+        z-index: 3;
+        background: linear-gradient(
+          115deg,
+          transparent 38%,
+          rgba(255, 255, 255, 0.58) 49%,
+          transparent 60%
+        );
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-48%) rotate(10deg);
+        transition:
+          opacity 0.25s ease,
+          transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      #magicCardsContainer .magic-card__content {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        display: flex;
+        min-height: 0;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1rem;
+        background: linear-gradient(180deg, transparent 38%, rgba(8, 18, 27, 0.82) 100%);
+        color: #fff;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(0.65rem);
+        transition:
+          opacity 0.32s ease,
+          transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      #magicCardsContainer .magic-card [data-magic-action] {
+        pointer-events: auto;
+        cursor: pointer;
+      }
+
+      #magicCardsContainer .magic-card__title,
+      #magicCardsContainer .magic-card__description,
+      #magicCardsContainer .magic-card__hint {
+        outline: none;
+      }
+
+      #magicCardsContainer .magic-card__eyebrow {
+        color: rgba(255, 255, 255, 0.68);
+        font-size: 0.56rem;
+        letter-spacing: 0.15em;
+      }
+
+      #magicCardsContainer .magic-card__title {
+        margin-top: 0.35rem;
+        color: #fff;
+        font-size: 0.95rem;
+        line-height: 1.2;
+      }
+
+      #magicCardsContainer .magic-card__description {
+        margin-top: 0.35rem;
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 0.66rem;
+        line-height: 1.45;
+      }
+
+      #magicCardsContainer .magic-card__footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding-top: 0.6rem;
+      }
+
+      #magicCardsContainer .magic-card__hint {
+        color: rgba(255, 255, 255, 0.68);
+        font-size: 0.56rem;
+      }
+
+      #magicCardsContainer .magic-card__arrow {
+        display: grid;
+        width: 1.65rem;
+        height: 1.65rem;
+        place-items: center;
+        border: 1px solid rgba(255, 255, 255, 0.36);
+        border-radius: 50%;
+        color: #fff;
+        font-size: 0.58rem;
+      }
+
+      #magicCardsContainer .magic-card.magic-card--active,
+      #magicCardsContainer .magic-card:hover,
+      #magicCardsContainer .magic-card:focus-within,
+      #magicCardsContainer .magic-card:focus-visible {
+        z-index: 100;
+        border-color: rgba(255, 255, 255, 0.9);
+        box-shadow: 0 20px 36px rgba(25, 42, 52, 0.24);
+        filter: saturate(1.08) brightness(1.04);
+        transform: translateX(-50%) translateX(var(--fan-x, 0px))
+          translateY(calc(var(--fan-y, 0px) - 1rem)) rotate(var(--fan-angle, 0deg))
+          scale(1.045);
+      }
+
+      #magicCardsContainer .magic-card.magic-card--active .magic-card__image,
+      #magicCardsContainer .magic-card:hover .magic-card__image,
+      #magicCardsContainer .magic-card:focus-within .magic-card__image,
+      #magicCardsContainer .magic-card:focus-visible .magic-card__image {
+        opacity: 0.86;
+        filter: saturate(1.05) contrast(1);
+        mix-blend-mode: normal;
+        transform: scale(1.06);
+      }
+
+      #magicCardsContainer .magic-card.magic-card--active .magic-card__content,
+      #magicCardsContainer .magic-card:hover .magic-card__content,
+      #magicCardsContainer .magic-card:focus-within .magic-card__content,
+      #magicCardsContainer .magic-card:focus-visible .magic-card__content {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      #magicCardsContainer .magic-card.magic-card--active .magic-card__sheen,
+      #magicCardsContainer .magic-card:hover .magic-card__sheen,
+      #magicCardsContainer .magic-card:focus-within .magic-card__sheen,
+      #magicCardsContainer .magic-card:focus-visible .magic-card__sheen {
+        opacity: 0.8;
+        transform: translateX(48%) rotate(10deg);
+      }
+
+      .edit-mode #magicCardsContainer .magic-card__content {
+        background: linear-gradient(180deg, transparent 34%, rgba(8, 18, 27, 0.7) 100%);
+        opacity: 0.92;
+        transform: none;
+        pointer-events: auto;
+      }
+
+      .edit-mode #magicCardsContainer .magic-card,
+      .edit-mode #magicCardsContainer .magic-card__image {
+        cursor: pointer;
+      }
+
+      #magicCardsContainer .magic-card.magic-card--viewer-source-hidden {
+        opacity: 0.08;
+        filter: saturate(0.55) blur(1px);
+      }
+
+      #magicCardsContainer .magic-card-add:not(.hidden) {
+        display: flex;
+      }
+
+      #magicCardsContainer .magic-card-add {
+        position: absolute;
+        right: 0.25rem;
+        bottom: 0;
+        z-index: 140;
+        min-height: 0;
+        height: auto;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        border-radius: 999px;
+      }
+
+      #magicCardsContainer .magic-card-add strong,
+      #magicCardsContainer .magic-card-add small {
+        display: block;
+        text-align: left;
+      }
+
+      #magicCardsContainer .magic-card-add small {
+        margin-top: 0.1rem;
+        font-size: 0.62rem;
+        opacity: 0.7;
+      }
+
+      #magicCardsContainer .magic-card-add:hover,
+      #magicCardsContainer .magic-card-add:focus-visible {
+        transform: translateY(-3px);
+      }
+
+      :root.theme-handdrawn .magic-cards-grid::before {
+        background: rgba(86, 104, 108, 0.15);
+        filter: blur(18px);
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card {
+        border: 2px solid var(--border-color);
+        border-radius: 1rem 0.72rem 1.1rem 0.82rem;
+        background: rgba(255, 253, 250, 0.24);
+        box-shadow: 4px 5px 0 0 rgba(45, 45, 45, 0.68);
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card::before {
+        opacity: 0.32;
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card__image {
+        opacity: 0.2;
+        filter: saturate(0.66) contrast(0.96);
+        mix-blend-mode: multiply;
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card__media {
+        background: rgba(255, 253, 250, 0.42);
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card__content {
+        color: var(--text-primary);
+        background: linear-gradient(180deg, transparent 36%, rgba(255, 253, 250, 0.9) 100%);
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card__eyebrow,
+      :root.theme-handdrawn #magicCardsContainer .magic-card__description,
+      :root.theme-handdrawn #magicCardsContainer .magic-card__hint {
+        color: rgba(45, 45, 45, 0.66);
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card__title {
+        color: var(--text-primary);
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card__arrow {
+        border-color: rgba(45, 45, 45, 0.4);
+        color: var(--text-primary);
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card.magic-card--active,
+      :root.theme-handdrawn #magicCardsContainer .magic-card:hover,
+      :root.theme-handdrawn #magicCardsContainer .magic-card:focus-within,
+      :root.theme-handdrawn #magicCardsContainer .magic-card:focus-visible {
+        border-color: var(--border-color);
+        background: rgba(255, 253, 250, 0.38);
+        box-shadow: 7px 8px 0 0 rgba(45, 45, 45, 0.8);
+        filter: none;
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card.magic-card--active .magic-card__image,
+      :root.theme-handdrawn #magicCardsContainer .magic-card:hover .magic-card__image,
+      :root.theme-handdrawn #magicCardsContainer .magic-card:focus-within .magic-card__image,
+      :root.theme-handdrawn #magicCardsContainer .magic-card:focus-visible .magic-card__image {
+        opacity: 0.78;
+        filter: saturate(0.9) contrast(1);
+        mix-blend-mode: multiply;
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card-add {
+        border: 2px dashed var(--border-color);
+        color: var(--text-primary);
+        background: rgba(255, 253, 250, 0.92);
+        box-shadow: 3px 3px 0 0 var(--border-color);
+      }
+
+      :root.theme-handdrawn #magicCardsContainer .magic-card-add:hover,
+      :root.theme-handdrawn #magicCardsContainer .magic-card-add:focus-visible {
+        background: var(--nb-card-blue);
+        box-shadow: 5px 5px 0 0 var(--border-color);
+      }
+
+      @media (max-width: 700px) {
+        .magic-section {
+          padding-inline: 0.75rem;
+        }
+
+        .magic-cards-grid {
+          height: 13.5rem;
+        }
+
+        #magicCardsContainer .magic-card {
+          width: min(9.4rem, 34vw);
+          height: min(13rem, 47vw);
+        }
+
+        #magicCardsContainer .magic-card-add {
+          right: 0;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #magicCardsContainer .magic-card,
+        #magicCardsContainer .magic-card.magic-card--active,
+        #magicCardsContainer .magic-card:hover,
+        #magicCardsContainer .magic-card:focus-within,
+        #magicCardsContainer .magic-card:focus-visible {
+          animation: none !important;
+          transform: translateX(-50%) translateX(var(--fan-x, 0px))
+            translateY(var(--fan-y, 0px)) rotate(var(--fan-angle, 0deg)) !important;
+          transition: none !important;
+        }
+
+        #magicCardsContainer .magic-card__sheen {
+          display: none;
+        }
+      }
+
+      /* ==============================
+         Magic Card 3D Image Viewer
+         ============================== */
+      .magic-card-viewer {
+        position: fixed;
+        inset: 0;
+        z-index: 300;
+        display: none;
+        visibility: hidden;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.28s ease, visibility 0s linear 0.72s;
+      }
+
+      .magic-card-viewer.magic-card-viewer--visible {
+        display: block;
+        visibility: visible;
+        opacity: 1;
+        pointer-events: auto;
+        transition-delay: 0s;
+      }
+
+      .magic-card-viewer__stage {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        perspective: 1600px;
+        pointer-events: auto;
+      }
+
+      .magic-card-viewer__card {
+        position: relative;
+        width: clamp(15rem, 34vw, 21rem);
+        aspect-ratio: 0.69;
+        transform: translate3d(
+            var(--viewer-origin-x, 0px),
+            var(--viewer-origin-y, 0px),
+            0
+          )
+          scale(var(--viewer-origin-scale, 0.42))
+          rotate(var(--viewer-origin-angle, 0deg));
+        transform-style: preserve-3d;
+        opacity: 0.12;
+        pointer-events: auto;
+        cursor: grab;
+        user-select: none;
+        touch-action: none;
+        transition:
+          transform 0.72s cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 0.42s ease;
+        will-change: transform, opacity;
+      }
+
+      .magic-card-viewer--dragging .magic-card-viewer__card {
+        cursor: grabbing;
+      }
+
+      .magic-card-viewer--open .magic-card-viewer__card {
+        transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+        opacity: 1;
+      }
+
+      .magic-card-viewer--closing .magic-card-viewer__card {
+        transform: translate3d(
+            var(--viewer-origin-x, 0px),
+            var(--viewer-origin-y, 0px),
+            0
+          )
+          scale(var(--viewer-origin-scale, 0.42))
+          rotate(var(--viewer-origin-angle, 0deg));
+        opacity: 0.12;
+      }
+
+      .magic-card-viewer__card-spin {
+        --viewer-card-depth: 0.82rem;
+        --viewer-card-half-depth: 0.41rem;
+        position: absolute;
+        inset: 0;
+        transform: rotateX(var(--viewer-rotate-x, 0deg))
+          rotateY(var(--viewer-rotate-y, 0deg));
+        transform-style: preserve-3d;
+        will-change: transform;
+      }
+
+      .magic-card-viewer__edge {
+        position: absolute;
+        z-index: 0;
+        display: block;
+        background: rgba(221, 247, 253, 0.16);
+        border-radius: 0.56rem;
+        backface-visibility: visible;
+        pointer-events: none;
+      }
+
+      .magic-card-viewer__edge--top,
+      .magic-card-viewer__edge--bottom {
+        left: 0;
+        width: 100%;
+        height: var(--viewer-card-depth);
+        transform-origin: center;
+      }
+
+      .magic-card-viewer__edge--top {
+        top: calc(var(--viewer-card-half-depth) * -1);
+        background: rgba(246, 255, 255, 0.24);
+        transform: rotateX(90deg);
+      }
+
+      .magic-card-viewer__edge--bottom {
+        top: calc(100% - var(--viewer-card-half-depth));
+        background: rgba(128, 199, 214, 0.16);
+        transform: rotateX(-90deg);
+      }
+
+      .magic-card-viewer__edge--right,
+      .magic-card-viewer__edge--left {
+        top: 0;
+        width: var(--viewer-card-depth);
+        height: 100%;
+        transform-origin: center;
+      }
+
+      .magic-card-viewer__edge--right {
+        left: calc(100% - var(--viewer-card-half-depth));
+        background: rgba(128, 199, 214, 0.18);
+        transform: rotateY(90deg);
+      }
+
+      .magic-card-viewer__edge--left {
+        left: calc(var(--viewer-card-half-depth) * -1);
+        background: rgba(246, 255, 255, 0.2);
+        transform: rotateY(-90deg);
+      }
+
+      .magic-card-viewer__sparkles {
+        position: absolute;
+        inset: -3.4rem;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .magic-card-viewer__sparkles span {
+        position: absolute;
+        display: block;
+        color: #f5fbff;
+        font-family: "Times New Roman", "STIX Two Text", serif;
+        font-size: clamp(0.9rem, 1.5vw, 1.35rem);
+        line-height: 1;
+        opacity: 0.32;
+        animation: magic-card-viewer-sparkle 2.8s ease-in-out infinite;
+        animation-delay: var(--sparkle-delay, 0s);
+        transform-origin: center;
+        will-change: opacity, transform;
+      }
+
+      .magic-card-viewer__sparkles span:nth-child(1) {
+        top: 8%;
+        left: 8%;
+        --sparkle-delay: -1.8s;
+      }
+
+      .magic-card-viewer__sparkles span:nth-child(2) {
+        top: 18%;
+        right: 2%;
+        color: #b9eaff;
+        font-size: clamp(0.75rem, 1.2vw, 1.05rem);
+        --sparkle-delay: -0.7s;
+      }
+
+      .magic-card-viewer__sparkles span:nth-child(3) {
+        right: 8%;
+        bottom: 10%;
+        --sparkle-delay: -2.45s;
+      }
+
+      .magic-card-viewer__sparkles span:nth-child(4) {
+        bottom: 1%;
+        left: 20%;
+        color: #b9eaff;
+        font-size: clamp(0.75rem, 1.2vw, 1.05rem);
+        --sparkle-delay: -1.15s;
+      }
+
+      .magic-card-viewer__sparkles span:nth-child(5) {
+        top: 51%;
+        left: -3%;
+        --sparkle-delay: -2.05s;
+      }
+
+      @keyframes magic-card-viewer-sparkle {
+        0%,
+        100% {
+          opacity: 0.24;
+          transform: scale(0.72) rotate(0deg);
+        }
+
+        50% {
+          opacity: 1;
+          transform: scale(1.08) rotate(14deg);
+        }
+      }
+
+      .magic-card-viewer__face {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        overflow: hidden;
+        border-radius: 1.16rem 0.94rem 1.24rem 1rem;
+        backface-visibility: hidden;
+        transform: translateZ(var(--viewer-card-half-depth));
+      }
+
+      .magic-card-viewer__face--front {
+        background: transparent;
+      }
+
+      .magic-card-viewer__face--back {
+        background: transparent;
+        transform: rotateY(180deg) translateZ(var(--viewer-card-half-depth));
+      }
+
+      .magic-card-viewer__image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        user-select: none;
+        -webkit-user-drag: none;
+      }
+
+      .magic-card-viewer__image--back {
+        opacity: 0.9;
+        transform: scaleX(-1);
+      }
+
+      .magic-card-viewer__face::after {
+        content: "";
+        position: absolute;
+        inset: -24% -42%;
+        z-index: 3;
+        background: rgba(255, 255, 255, 0.28);
+        clip-path: polygon(43% 0, 57% 0, 100% 100%, 86% 100%);
+        mix-blend-mode: screen;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateX(-128%) rotate(5deg);
+      }
+
+      .magic-card-viewer--open .magic-card-viewer__face::after {
+        animation: magic-card-viewer-foil-sweep 5.8s ease-in-out infinite;
+      }
+
+      @keyframes magic-card-viewer-foil-sweep {
+        0%,
+        62%,
+        100% {
+          opacity: 0;
+          transform: translateX(-128%) rotate(5deg);
+        }
+
+        70% {
+          opacity: 0.58;
+        }
+
+        79% {
+          opacity: 0;
+          transform: translateX(128%) rotate(5deg);
+        }
+      }
+
+      .magic-card-viewer__details {
+        position: absolute;
+        right: 1.45rem;
+        bottom: 1.45rem;
+        left: 1.45rem;
+        z-index: 2;
+      }
+
+      .magic-card-viewer__kicker {
+        display: block;
+        color: rgba(230, 252, 255, 0.68);
+        font-size: 0.62rem;
+        letter-spacing: 0.22em;
+      }
+
+      .magic-card-viewer__title {
+        margin-top: 0.6rem;
+        color: #fff;
+        font-size: clamp(1.25rem, 3.2vw, 1.8rem);
+        line-height: 1.15;
+      }
+
+      .magic-card-viewer__description {
+        max-width: 26rem;
+        margin-top: 0.6rem;
+        color: rgba(237, 252, 255, 0.76);
+        font-size: 0.78rem;
+        line-height: 1.55;
+      }
+
+      @media (max-width: 560px) {
+        .magic-card-viewer__card {
+          width: min(72vw, 19rem);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .magic-card-viewer,
+        .magic-card-viewer__card {
+          transition: none !important;
+        }
+
+        .magic-card-viewer__sparkles span {
+          animation: none !important;
+          opacity: 0.86;
+          transform: none;
+        }
+
+        .magic-card-viewer__face::after {
+          animation: none !important;
+          opacity: 0;
+        }
+
+        .magic-card-viewer__card {
+          transform: none !important;
+          opacity: 1 !important;
+        }
+      }
+
+
+      /* ==============================
+         Timeline local scroller
+         ============================== */
+      @media (min-width: 1280px) {
+        #timelineContainer {
+          align-self: flex-start;
+          max-height: calc(100vh - 8rem);
+          min-height: 0;
+          overflow: hidden;
+        }
+
+        #timelineItems {
+          max-height: calc(100vh - 16rem);
+          min-height: 0;
+          overflow-y: auto;
+          overscroll-behavior: none;
+          scrollbar-gutter: auto;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          touch-action: pan-y;
+          padding-right: 0;
+        }
+
+        #timelineItems::-webkit-scrollbar {
+          display: none;
+        }
+      }

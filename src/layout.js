@@ -174,6 +174,11 @@ function assignRuntimeLayoutIds() {
     element.dataset.layoutId = `site-${id}`;
   });
 
+  document.querySelectorAll('[data-editable="magic-card"]').forEach((element, index) => {
+    const id = element.dataset.id || `index-${index}`;
+    element.dataset.layoutId = `magic-card-${id}`;
+  });
+
   document.querySelectorAll('[data-editable="social"]').forEach((element, index) => {
     const id = element.dataset.id || `index-${index}`;
     element.dataset.layoutId = `social-${id}`;

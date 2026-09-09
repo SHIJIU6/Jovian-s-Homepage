@@ -242,6 +242,186 @@ export function updateSiteCardElement(target, site) {
   }
 }
 
+function setMagicCardMedia(container, card) {
+  if (!container) return;
+
+  container.querySelector('[data-field="image"]')?.remove();
+  container.querySelector(".magic-card__placeholder")?.remove();
+
+  if (card.image) {
+    const image = document.createElement("img");
+    image.className = "magic-card__image";
+    image.alt = card.title || "Magic card";
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.dataset.field = "image";
+    image.dataset.magicAction = "preview";
+    image.setAttribute("role", "button");
+    image.setAttribute("tabindex", "0");
+    image.setAttribute("aria-label", `查看${card.title || "魔术卡片"}图片`);
+    image.src = card.image;
+    container.prepend(image);
+    return;
+  }
+
+  const placeholder = document.createElement("div");
+  placeholder.className = "magic-card__placeholder";
+  placeholder.setAttribute("aria-hidden", "true");
+
+  const icon = document.createElement("i");
+  icon.className = "fas fa-wand-magic-sparkles";
+  placeholder.append(icon);
+  container.prepend(placeholder);
+}
+
+const magicCardFanObserved = new WeakSet();
+
+function setMagicCardFanPosition(element, index, count, spread) {
+  if (!element) return;
+
+  const center = (count - 1) / 2;
+  const distanceFromCenter = index - center;
+  const angle = distanceFromCenter * Math.min(14, 56 / Math.max(count - 1, 1));
+  const verticalOffset = -Math.abs(distanceFromCenter) * 4;
+
+  element.dataset.fanIndex = String(index);
+  element.style.setProperty("--fan-x", `${Math.round(distanceFromCenter * spread)}px`);
+  element.style.setProperty("--fan-y", `${Math.round(verticalOffset)}px`);
+  element.style.setProperty("--fan-angle", `${angle.toFixed(2)}deg`);
+  element.style.setProperty(
+    "--fan-z",
+    String(Math.round(count * 10 - Math.abs(distanceFromCenter) * 10) + index),
+  );
+  element.style.setProperty("--magic-delay", `${Math.min(index, 6) * 70}ms`);
+}
+
+function syncMagicCardFanLayout(container) {
+  if (!container) return;
+
+  const cards = [...container.querySelectorAll('[data-editable="magic-card"]')];
+  if (cards.length) {
+    const cardWidth =
+      Number.parseFloat(window.getComputedStyle(cards[0]).width) || 160;
+    const availableWidth = Math.max(220, container.clientWidth - 64);
+    const fitSpread = (availableWidth - cardWidth) / Math.max(cards.length - 1, 1);
+    const spread = Math.min(112, Math.max(36, fitSpread));
+
+    cards.forEach((card, index) =>
+      setMagicCardFanPosition(card, index, cards.length, spread),
+    );
+  }
+
+  if (typeof ResizeObserver === "function" && !magicCardFanObserved.has(container)) {
+    magicCardFanObserved.add(container);
+    const observer = new ResizeObserver(() => {
+      window.requestAnimationFrame(() => syncMagicCardFanLayout(container));
+    });
+    observer.observe(container);
+  }
+}
+
+export function createMagicCardElement(card, { index = 0, isEditMode = false } = {}) {
+  const element = document.createElement("article");
+  const cardId = card.id || generateId();
+
+  element.className = "magic-card relative";
+  element.dataset.editable = "magic-card";
+  element.dataset.id = cardId;
+  element.dataset.url = card.url || "#";
+  element.dataset.variant = String(index % 4);
+  element.dataset.layoutId = `magic-card-${cardId}`;
+  element.setAttribute("role", "group");
+  element.setAttribute("aria-label", card.title || "Magic card");
+
+  const media = document.createElement("div");
+  media.className = "magic-card__media";
+  setMagicCardMedia(media, card);
+
+  const sheen = document.createElement("div");
+  sheen.className = "magic-card__sheen";
+  sheen.setAttribute("aria-hidden", "true");
+
+  const content = document.createElement("div");
+  content.className = "magic-card__content";
+
+  const eyebrow = document.createElement("span");
+  eyebrow.className = "magic-card__eyebrow";
+  eyebrow.textContent = `MAGIC / ${String(index + 1).padStart(2, "0")}`;
+
+  const title = document.createElement("h3");
+  title.className = "magic-card__title heading";
+  title.dataset.field = "title";
+  title.dataset.magicAction = "link";
+  title.setAttribute("role", "link");
+  title.setAttribute("tabindex", "0");
+  title.textContent = card.title || "魔术卡片";
+
+  const description = document.createElement("p");
+  description.className = "magic-card__description";
+  description.dataset.field = "description";
+  description.textContent = card.description || "";
+  if (card.description?.trim()) {
+    description.dataset.magicAction = "link";
+    description.setAttribute("role", "link");
+    description.setAttribute("tabindex", "0");
+  }
+
+  const footer = document.createElement("div");
+  footer.className = "magic-card__footer";
+
+  const hint = document.createElement("span");
+  hint.className = "magic-card__hint";
+  hint.dataset.magicAction = "link";
+  hint.setAttribute("role", "link");
+  hint.setAttribute("tabindex", "0");
+  hint.textContent = "打开卡片";
+
+  const arrow = document.createElement("span");
+  arrow.className = "magic-card__arrow";
+  arrow.dataset.magicAction = "link";
+  arrow.setAttribute("role", "link");
+  arrow.setAttribute("tabindex", "0");
+  arrow.setAttribute("aria-label", "打开卡片");
+  arrow.innerHTML = '<i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>';
+
+  footer.append(hint, arrow);
+  content.append(eyebrow, title, description, footer);
+
+  const deleteButton = createDeleteButton(
+    "magic-card__delete edit-delete-btn edit-control hidden absolute right-3 top-3 w-7 h-7 rounded-full bg-red-500 text-white text-xs flex items-center justify-center",
+  );
+
+  element.append(media, sheen, content, deleteButton);
+  setEditableState(element, isEditMode);
+  return element;
+}
+
+export function updateMagicCardElement(target, card) {
+  if (!target) return;
+
+  target.dataset.url = card.url || "#";
+  target.setAttribute("aria-label", card.title || "Magic card");
+
+  const title = target.querySelector('[data-field="title"]');
+  const description = target.querySelector('[data-field="description"]');
+  const media = target.querySelector(".magic-card__media");
+
+  if (title) title.textContent = card.title || "魔术卡片";
+  if (description) {
+    description.textContent = card.description || "";
+    if (card.description?.trim()) {
+      description.dataset.magicAction = "link";
+      description.setAttribute("role", "link");
+      description.setAttribute("tabindex", "0");
+    } else {
+      delete description.dataset.magicAction;
+      description.removeAttribute("role");
+      description.removeAttribute("tabindex");
+    }
+  }
+  setMagicCardMedia(media, card);
+}
+
 export function createSocialLinkElement(link, { isEditMode = false } = {}) {
   const anchor = document.createElement("a");
   const linkId = link.id || generateId();
@@ -302,15 +482,29 @@ export function insertSocialLinkElement(element) {
   requestAnimationFrame(() => updateSocialLayoutBreaks(container));
 }
 
+export function insertMagicCardElement(element) {
+  const container = document.getElementById("magicCardsContainer");
+  if (!container || !element) return;
+
+  const addButton = container.querySelector(".edit-add-btn");
+  if (addButton) {
+    container.insertBefore(element, addButton);
+  } else {
+    container.append(element);
+  }
+
+  syncMagicCardFanLayout(container);
+}
+
 export function renderTimeline(timeline, { isEditMode = false } = {}) {
   const container = document.getElementById("timelineItems");
   if (!container) return;
 
   const { addButton, fragment } = createPreservedFragment(container);
+  if (addButton) fragment.append(addButton);
   timeline.forEach((item, index) => {
     fragment.append(createTimelineItemElement(item, { index, isEditMode }));
   });
-  if (addButton) fragment.append(addButton);
   container.replaceChildren(fragment);
 }
 
@@ -351,11 +545,25 @@ export function renderSocialLinks(socialLinks, { isEditMode = false } = {}) {
   requestAnimationFrame(() => updateSocialLayoutBreaks(container));
 }
 
+export function renderMagicCards(magicCards, { isEditMode = false } = {}) {
+  const container = document.getElementById("magicCardsContainer");
+  if (!container) return;
+
+  const { addButton, fragment } = createPreservedFragment(container);
+  magicCards.forEach((card, index) => {
+    fragment.append(createMagicCardElement(card, { index, isEditMode }));
+  });
+  if (addButton) fragment.append(addButton);
+  container.replaceChildren(fragment);
+  syncMagicCardFanLayout(container);
+}
+
 export function renderConfig(config, { isEditMode = false } = {}) {
   renderTimeline(config.timeline || [], { isEditMode });
   renderTags(config.tags || [], { isEditMode });
   renderSites(config.sites || [], { isEditMode });
   renderSocialLinks(config.socialLinks || [], { isEditMode });
+  renderMagicCards(config.magicCards || [], { isEditMode });
 
   const location = document.querySelector('[data-field="location"]');
   const status = document.querySelector('[data-field="status"]');
@@ -363,6 +571,7 @@ export function renderConfig(config, { isEditMode = false } = {}) {
   const background = document.querySelector(".theme-bg-dark img");
   const timelineContainer = document.getElementById("timelineContainer");
   const tagsContainer = document.getElementById("tagsContainer");
+  const magicCardsSection = document.getElementById("magicCardsSection");
   const infoCard = document.querySelector('[data-editable="info"]');
   const locationRow = document.querySelector('[data-info-row="location"]');
   const statusRow = document.querySelector('[data-info-row="status"]');
@@ -374,11 +583,13 @@ export function renderConfig(config, { isEditMode = false } = {}) {
 
   const hasTimelineItems = (config.timeline || []).length > 0;
   const hasTags = (config.tags || []).length > 0;
+  const hasMagicCards = (config.magicCards || []).length > 0;
   const hasLocation = Boolean(config.info?.location);
   const hasStatus = Boolean(config.info?.status);
 
   setSectionVisible(timelineContainer, isEditMode || hasTimelineItems);
   setSectionVisible(tagsContainer, isEditMode || hasTags);
+  setSectionVisible(magicCardsSection, isEditMode || hasMagicCards);
   setSectionVisible(locationRow, isEditMode || hasLocation);
   setSectionVisible(statusRow, isEditMode || hasStatus);
   setSectionVisible(infoCard, isEditMode || hasLocation || hasStatus);

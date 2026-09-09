@@ -34,7 +34,7 @@
         }
       })();
     </script>
-    <link href="/assets/styles.css?v=20260323-4" rel="stylesheet" />
+    <link href="/assets/styles.css?v=20260909-3" rel="stylesheet" />
     <link
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
       rel="stylesheet"
@@ -684,6 +684,98 @@
             </div>
           </div>
 
+          <!-- Magic Card fields -->
+          <div id="itemModalMagicCardFields" class="space-y-4 hidden">
+            <div class="magic-card-modal-note rounded-xl p-3 flex items-start gap-3">
+              <span class="magic-card-modal-note__icon" aria-hidden="true"
+                ><i class="fas fa-wand-magic-sparkles"></i
+              ></span>
+              <div>
+                <p class="text-sm font-semibold">专属魔术卡片</p>
+                <p class="text-xs opacity-70 mt-1">
+                  图片会上传到 Cloudflare R2，保存配置后在主页长期展示。
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-sm mb-1 opacity-80" for="magicModalTitle"
+                >标题</label
+              >
+              <input
+                id="magicModalTitle"
+                class="w-full px-4 py-3 rounded-xl"
+                placeholder="例如：我的灵感收藏"
+                autocomplete="off"
+              />
+            </div>
+
+            <div>
+              <label
+                class="block text-sm mb-1 opacity-80"
+                for="magicModalDescription"
+                >描述</label
+              >
+              <textarea
+                id="magicModalDescription"
+                class="w-full px-4 py-3 rounded-xl"
+                rows="3"
+                placeholder="用一句话介绍这张卡片"
+              ></textarea>
+            </div>
+
+            <div>
+              <label class="block text-sm mb-1 opacity-80" for="magicModalUrl"
+                >链接（可选）</label
+              >
+              <input
+                id="magicModalUrl"
+                class="w-full px-4 py-3 rounded-xl"
+                placeholder="https://example.com"
+                autocomplete="off"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm mb-1 opacity-80" for="magicModalImage"
+                >卡片图片</label
+              >
+              <div class="flex gap-2">
+                <input
+                  id="magicModalImage"
+                  class="flex-1 px-4 py-3 rounded-xl"
+                  placeholder="上传图片后自动填入 R2 地址"
+                  autocomplete="off"
+                />
+                <button
+                  type="button"
+                  id="magicModalImageUploadBtn"
+                  class="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+                  title="上传本地图片到 Cloudflare R2"
+                >
+                  <i class="fas fa-cloud-arrow-up"></i>
+                </button>
+                <input
+                  id="magicModalImageFile"
+                  type="file"
+                  class="hidden"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                />
+              </div>
+              <div class="magic-card-modal-preview mt-3 rounded-xl overflow-hidden">
+                <img
+                  id="magicModalImagePreview"
+                  alt="魔术卡片预览"
+                  class="w-full h-36 object-cover hidden"
+                  src=""
+                />
+                <span class="magic-card-modal-preview__empty text-xs opacity-60"
+                  >尚未选择图片</span
+                >
+              </div>
+            </div>
+          </div>
+
           <div class="mt-6 flex justify-end gap-3">
             <button
               type="button"
@@ -701,6 +793,81 @@
           </div>
         </form>
       </div>
+    </div>
+
+    <!-- Magic Card Viewer -->
+    <div
+      id="magicCardViewer"
+      class="magic-card-viewer hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-hidden="true"
+      aria-labelledby="magicCardViewerTitle"
+      aria-describedby="magicCardViewerDescription"
+      >
+      <div class="magic-card-viewer__stage">
+        <article
+          id="magicCardViewerCard"
+          class="magic-card-viewer__card"
+          tabindex="-1"
+          aria-label="魔术卡片图片预览"
+        >
+          <div class="magic-card-viewer__sparkles" aria-hidden="true">
+            <span>✦</span>
+            <span>✧</span>
+            <span>✦</span>
+            <span>✧</span>
+            <span>✦</span>
+          </div>
+          <div
+            id="magicCardViewerSpin"
+            class="magic-card-viewer__card-spin"
+          >
+            <span
+              class="magic-card-viewer__edge magic-card-viewer__edge--top"
+              aria-hidden="true"
+            ></span>
+            <span
+              class="magic-card-viewer__edge magic-card-viewer__edge--right"
+              aria-hidden="true"
+            ></span>
+            <span
+              class="magic-card-viewer__edge magic-card-viewer__edge--bottom"
+              aria-hidden="true"
+            ></span>
+            <span
+              class="magic-card-viewer__edge magic-card-viewer__edge--left"
+              aria-hidden="true"
+            ></span>
+            <div class="magic-card-viewer__face magic-card-viewer__face--front">
+              <img
+                id="magicCardViewerImage"
+                class="magic-card-viewer__image"
+                alt=""
+                src=""
+              />
+              <div class="magic-card-viewer__details">
+                <span id="magicCardViewerKicker" class="magic-card-viewer__kicker"
+                  >MAGIC / 01</span
+                >
+                <h2 id="magicCardViewerTitle" class="magic-card-viewer__title heading">
+                  魔术卡片
+                </h2>
+                <p id="magicCardViewerDescription" class="magic-card-viewer__description"></p>
+              </div>
+            </div>
+            <div class="magic-card-viewer__face magic-card-viewer__face--back" aria-hidden="true">
+              <img
+                id="magicCardViewerBackImage"
+                class="magic-card-viewer__image magic-card-viewer__image--back"
+                alt=""
+                src=""
+              />
+            </div>
+          </div>
+        </article>
+      </div>
+
     </div>
 
     <!-- Edit Toolbar (shown when logged in) -->
@@ -798,7 +965,7 @@
     >
       <!-- Timeline Sidebar -->
       <aside
-        class="hidden xl:block w-48 flex-shrink-0 pt-32 relative"
+        class="hidden xl:block w-56 flex-shrink-0 pt-32 relative"
         id="timelineContainer"
         data-layout-id="module-timeline"
       >
@@ -1281,9 +1448,51 @@
               </button>
             </div>
           </section>
+
         </div>
       </main>
     </div>
+
+    <!-- Magic Cards Section -->
+    <section
+      class="magic-section"
+      id="magicCardsSection"
+      data-layout-id="module-magic-cards"
+      style="display: none"
+    >
+      <div class="magic-section__header">
+        <div>
+          <span class="magic-section__kicker">PERSONAL / MAGIC ARCHIVE</span>
+          <h2 class="magic-section__title heading">
+            <span class="magic-section__mark" aria-hidden="true">✦</span>
+            Magic Cards
+          </h2>
+          <p class="magic-section__description">
+            上传你的图片，把想分享的故事藏进一张会发光的卡片。
+          </p>
+        </div>
+        <div class="magic-section__sigil" aria-hidden="true">
+          <i class="fas fa-wand-magic-sparkles"></i>
+        </div>
+      </div>
+
+      <div class="magic-cards-grid" id="magicCardsContainer">
+        <button
+          data-layout-id="button-add-magic-card"
+          class="edit-add-btn hidden magic-card-add"
+          onclick="addMagicCard()"
+          type="button"
+        >
+          <span class="magic-card-add__icon" aria-hidden="true"
+            ><i class="fas fa-plus"></i
+          ></span>
+          <span>
+            <strong>添加魔术卡片</strong>
+            <small>上传图片，保存一段记忆</small>
+          </span>
+        </button>
+      </div>
+    </section>
 
     <!-- Footer -->
     <footer
@@ -1292,6 +1501,6 @@
       Jovian © 2026
     </footer>
 
-    <script src="/assets/app.js?v=20260323-4" defer></script>
+    <script src="/assets/app.js?v=20260909-3" defer></script>
   </body>
 </html>

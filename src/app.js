@@ -18,11 +18,14 @@ import {
 import {
   createSiteCardElement,
   createSocialLinkElement,
+  createMagicCardElement,
   createTagElement,
   createTimelineItemElement,
+  insertMagicCardElement,
   insertSiteCardElement,
   insertSocialLinkElement,
   renderConfig,
+  updateMagicCardElement,
   updateSiteCardElement,
   updateSocialLinkElement,
 } from "./render.js";
@@ -34,6 +37,22 @@ let itemModalState = { type: null, mode: null, target: null };
 let itemModalUiWired = false;
 let clockTimer = null;
 let lastClockValue = "";
+let syncMagicCardsViewport = () => {};
+let magicCardViewerState = {
+  sourceCard: null,
+  returnFocus: null,
+  closeTimer: 0,
+};
+let magicCardViewerRotation = {
+  frameId: 0,
+  lastTimestamp: 0,
+  x: 0,
+  y: 0,
+  dragging: false,
+  pointerId: null,
+  lastPointerX: 0,
+  lastPointerY: 0,
+};
 const THEME_STORAGE_KEY = "theme";
 const THEME_MIGRATION_KEY = "theme-default-migration";
 const THEME_MIGRATION_VERSION = "2026-04-24-dawn";
@@ -82,6 +101,301 @@ function navigateToUrl(url) {
   window.open(trimmed, "_blank", "noopener,noreferrer");
 }
 
+function prefersReducedMotion() {
+  return window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+}
+
+function isMagicCardViewerOpen() {
+  const viewer = document.getElementById("magicCardViewer");
+  return Boolean(viewer && !viewer.classList.contains("hidden"));
+}
+
+function setMagicCardViewerOrigin(sourceCard) {
+  const viewer = document.getElementById("magicCardViewer");
+  const viewerCard = document.getElementById("magicCardViewerCard");
+  if (!viewer || !viewerCard || !sourceCard?.isConnected) return false;
+
+  const sourceRect = sourceCard.getBoundingClientRect();
+  const targetWidth = viewerCard.offsetWidth;
+  const targetHeight = viewerCard.offsetHeight;
+  if (!sourceRect.width || !sourceRect.height || !targetWidth || !targetHeight) {
+    return false;
+  }
+
+  const originScale = Math.max(
+    0.1,
+    Math.min(1.25, Math.min(sourceRect.width / targetWidth, sourceRect.height / targetHeight)),
+  );
+  const originX = sourceRect.left + sourceRect.width / 2 - window.innerWidth / 2;
+  const originY = sourceRect.top + sourceRect.height / 2 - window.innerHeight / 2;
+  const originAngle =
+    Number.parseFloat(sourceCard.style.getPropertyValue("--fan-angle")) || 0;
+
+  viewerCard.style.setProperty("--viewer-origin-x", `${Math.round(originX)}px`);
+  viewerCard.style.setProperty("--viewer-origin-y", `${Math.round(originY)}px`);
+  viewerCard.style.setProperty("--viewer-origin-scale", originScale.toFixed(4));
+  viewerCard.style.setProperty("--viewer-origin-angle", `${originAngle.toFixed(2)}deg`);
+  return true;
+}
+
+function setMagicCardViewerRotation() {
+  const viewerSpin = document.getElementById("magicCardViewerSpin");
+  if (!viewerSpin) return;
+
+  viewerSpin.style.setProperty(
+    "--viewer-rotate-x",
+    `${magicCardViewerRotation.x.toFixed(2)}deg`,
+  );
+  viewerSpin.style.setProperty(
+    "--viewer-rotate-y",
+    `${magicCardViewerRotation.y.toFixed(2)}deg`,
+  );
+}
+
+function stopMagicCardViewerRotation() {
+  if (magicCardViewerRotation.frameId) {
+    window.cancelAnimationFrame(magicCardViewerRotation.frameId);
+  }
+  magicCardViewerRotation.frameId = 0;
+  magicCardViewerRotation.lastTimestamp = 0;
+}
+
+function animateMagicCardViewerRotation(timestamp) {
+  if (!isMagicCardViewerOpen()) {
+    stopMagicCardViewerRotation();
+    return;
+  }
+
+  if (
+    magicCardViewerRotation.lastTimestamp &&
+    !magicCardViewerRotation.dragging &&
+    !prefersReducedMotion()
+  ) {
+    const elapsedSeconds = Math.min(
+      0.05,
+      (timestamp - magicCardViewerRotation.lastTimestamp) / 1000,
+    );
+    magicCardViewerRotation.y += elapsedSeconds * (360 / 22);
+  }
+
+  magicCardViewerRotation.lastTimestamp = timestamp;
+  setMagicCardViewerRotation();
+  magicCardViewerRotation.frameId = window.requestAnimationFrame(animateMagicCardViewerRotation);
+}
+
+function startMagicCardViewerRotation() {
+  stopMagicCardViewerRotation();
+  magicCardViewerRotation.x = prefersReducedMotion() ? 0 : -6;
+  magicCardViewerRotation.y = 0;
+  magicCardViewerRotation.dragging = false;
+  magicCardViewerRotation.pointerId = null;
+  setMagicCardViewerRotation();
+  if (prefersReducedMotion()) return;
+  magicCardViewerRotation.frameId = window.requestAnimationFrame(animateMagicCardViewerRotation);
+}
+
+function handleMagicCardViewerPointerDown(event) {
+  const viewer = document.getElementById("magicCardViewer");
+  if (!viewer || !isMagicCardViewerOpen()) return;
+  if (event.button !== undefined && event.button !== 0) return;
+
+  magicCardViewerRotation.dragging = true;
+  magicCardViewerRotation.pointerId = event.pointerId;
+  magicCardViewerRotation.lastPointerX = event.clientX;
+  magicCardViewerRotation.lastPointerY = event.clientY;
+  viewer.classList.add("magic-card-viewer--dragging");
+  event.currentTarget.setPointerCapture?.(event.pointerId);
+  event.preventDefault();
+}
+
+function handleMagicCardViewerPointerMove(event) {
+  if (
+    !magicCardViewerRotation.dragging ||
+    magicCardViewerRotation.pointerId !== event.pointerId
+  ) {
+    return;
+  }
+
+  const deltaX = event.clientX - magicCardViewerRotation.lastPointerX;
+  const deltaY = event.clientY - magicCardViewerRotation.lastPointerY;
+  magicCardViewerRotation.lastPointerX = event.clientX;
+  magicCardViewerRotation.lastPointerY = event.clientY;
+  magicCardViewerRotation.y += deltaX * 0.55;
+  magicCardViewerRotation.x = Math.max(
+    -82,
+    Math.min(82, magicCardViewerRotation.x - deltaY * 0.45),
+  );
+  setMagicCardViewerRotation();
+  event.preventDefault();
+}
+
+function releaseMagicCardViewerPointerCapture(element, pointerId) {
+  if (
+    typeof element?.hasPointerCapture === "function" &&
+    element.hasPointerCapture(pointerId)
+  ) {
+    element.releasePointerCapture?.(pointerId);
+  }
+}
+
+function finishMagicCardViewerPointerDrag(event) {
+  if (
+    !magicCardViewerRotation.dragging ||
+    magicCardViewerRotation.pointerId !== event.pointerId
+  ) {
+    return;
+  }
+
+  const viewerCard = event.currentTarget;
+  magicCardViewerRotation.dragging = false;
+  magicCardViewerRotation.pointerId = null;
+  releaseMagicCardViewerPointerCapture(viewerCard, event.pointerId);
+  document
+    .getElementById("magicCardViewer")
+    ?.classList.remove("magic-card-viewer--dragging");
+  magicCardViewerRotation.lastTimestamp = performance.now();
+}
+
+function openMagicCardViewer(card, returnFocus = null) {
+  const viewer = document.getElementById("magicCardViewer");
+  const viewerCard = document.getElementById("magicCardViewerCard");
+  const sourceImage = card?.querySelector('[data-field="image"]');
+  if (!viewer || !viewerCard || !card || !sourceImage?.src) {
+    showToast("这张卡片还没有图片", "info");
+    return;
+  }
+
+  if (magicCardViewerState.closeTimer) {
+    window.clearTimeout(magicCardViewerState.closeTimer);
+  }
+
+  const title = card.querySelector('[data-field="title"]')?.textContent?.trim() || "魔术卡片";
+  const description =
+    card.querySelector('[data-field="description"]')?.textContent?.trim() || "";
+  const index = Number.parseInt(card.dataset.fanIndex || "0", 10);
+  const viewerImage = document.getElementById("magicCardViewerImage");
+  const viewerBackImage = document.getElementById("magicCardViewerBackImage");
+  const viewerTitle = document.getElementById("magicCardViewerTitle");
+  const viewerDescription = document.getElementById("magicCardViewerDescription");
+  const viewerKicker = document.getElementById("magicCardViewerKicker");
+
+  if (viewerImage) {
+    viewerImage.src = sourceImage.currentSrc || sourceImage.src;
+    viewerImage.alt = title;
+  }
+  if (viewerBackImage) {
+    viewerBackImage.src = sourceImage.currentSrc || sourceImage.src;
+    viewerBackImage.alt = title;
+  }
+  if (viewerTitle) viewerTitle.textContent = title;
+  if (viewerDescription) viewerDescription.textContent = description;
+  if (viewerKicker) {
+    viewerKicker.textContent = `MAGIC / ${String(Number.isFinite(index) ? index + 1 : 1).padStart(
+      2,
+      "0",
+    )}`;
+  }
+
+  magicCardViewerState = {
+    sourceCard: card,
+    returnFocus: returnFocus || sourceImage,
+    closeTimer: 0,
+  };
+  card.classList.add("magic-card--viewer-source-hidden");
+  document.body.classList.add("magic-viewer-open");
+  viewer.setAttribute("aria-hidden", "false");
+  viewer.classList.remove("magic-card-viewer--open", "magic-card-viewer--closing");
+  viewer.classList.remove("hidden");
+  viewer.classList.add("magic-card-viewer--visible");
+
+  const hasOrigin = setMagicCardViewerOrigin(card);
+  if (!hasOrigin || prefersReducedMotion()) {
+    viewer.classList.add("magic-card-viewer--open");
+  } else {
+    void viewerCard.offsetWidth;
+    window.requestAnimationFrame(() => {
+      if (isMagicCardViewerOpen()) viewer.classList.add("magic-card-viewer--open");
+    });
+  }
+
+  startMagicCardViewerRotation();
+}
+
+function finishMagicCardViewerClose() {
+  const viewer = document.getElementById("magicCardViewer");
+  const viewerCard = document.getElementById("magicCardViewerCard");
+  const viewerImage = document.getElementById("magicCardViewerImage");
+  const viewerBackImage = document.getElementById("magicCardViewerBackImage");
+  const returnFocus = magicCardViewerState.returnFocus;
+
+  if (magicCardViewerState.closeTimer) {
+    window.clearTimeout(magicCardViewerState.closeTimer);
+  }
+  stopMagicCardViewerRotation();
+  document
+    .getElementById("magicCardViewer")
+    ?.classList.remove("magic-card-viewer--dragging");
+  magicCardViewerState.sourceCard?.classList.remove("magic-card--viewer-source-hidden");
+  viewer?.classList.add("hidden");
+  viewer?.classList.remove(
+    "magic-card-viewer--visible",
+    "magic-card-viewer--open",
+    "magic-card-viewer--closing",
+  );
+  viewer?.setAttribute("aria-hidden", "true");
+  viewerImage?.removeAttribute("src");
+  viewerBackImage?.removeAttribute("src");
+  viewerCard?.style.removeProperty("--viewer-origin-x");
+  viewerCard?.style.removeProperty("--viewer-origin-y");
+  viewerCard?.style.removeProperty("--viewer-origin-scale");
+  viewerCard?.style.removeProperty("--viewer-origin-angle");
+  document.body.classList.remove("magic-viewer-open");
+  magicCardViewerState = { sourceCard: null, returnFocus: null, closeTimer: 0 };
+
+  if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
+}
+
+function closeMagicCardViewer() {
+  const viewer = document.getElementById("magicCardViewer");
+  const viewerCard = document.getElementById("magicCardViewerCard");
+  if (!viewer || !viewerCard || viewer.classList.contains("hidden")) return;
+  if (viewer.classList.contains("magic-card-viewer--closing")) return;
+
+  const sourceCard = magicCardViewerState.sourceCard;
+  sourceCard?.classList.remove("magic-card--viewer-source-hidden");
+  if (
+    !sourceCard?.isConnected ||
+    prefersReducedMotion() ||
+    !setMagicCardViewerOrigin(sourceCard)
+  ) {
+    finishMagicCardViewerClose();
+    return;
+  }
+
+  stopMagicCardViewerRotation();
+  viewer.classList.remove("magic-card-viewer--dragging");
+  viewer.classList.remove("magic-card-viewer--open");
+  viewer.classList.add("magic-card-viewer--closing");
+  magicCardViewerState.closeTimer = window.setTimeout(finishMagicCardViewerClose, 600);
+}
+
+function wireMagicCardViewer() {
+  const viewer = document.getElementById("magicCardViewer");
+  const stage = viewer?.querySelector(".magic-card-viewer__stage");
+  const viewerCard = document.getElementById("magicCardViewerCard");
+  if (!viewer) return;
+
+  viewer.addEventListener("click", (event) => {
+    if (event.target === viewer || event.target === stage) closeMagicCardViewer();
+  });
+
+  viewerCard?.addEventListener("pointerdown", handleMagicCardViewerPointerDown);
+  viewerCard?.addEventListener("pointermove", handleMagicCardViewerPointerMove);
+  viewerCard?.addEventListener("pointerup", finishMagicCardViewerPointerDrag);
+  viewerCard?.addEventListener("pointercancel", finishMagicCardViewerPointerDrag);
+  viewerCard?.addEventListener("lostpointercapture", finishMagicCardViewerPointerDrag);
+}
+
 function closeAuthModal() {
   document.getElementById("authModal")?.classList.add("hidden");
   const passwordInput = document.getElementById("authPassword");
@@ -107,6 +421,9 @@ function setImagePreview(previewElement, url) {
   const src = (url || "").trim();
   previewElement.src = src;
   previewElement.classList.toggle("hidden", !src);
+  previewElement.parentElement
+    ?.querySelector(".magic-card-modal-preview__empty")
+    ?.classList.toggle("hidden", Boolean(src));
 }
 
 function toggleSiteModalInputMode() {
@@ -187,6 +504,25 @@ function fillSocialModal(target) {
   toggleSocialModalInputMode();
 }
 
+function fillMagicCardModal(target) {
+  const title = target?.querySelector('[data-field="title"]')?.textContent?.trim() || "";
+  const description =
+    target?.querySelector('[data-field="description"]')?.textContent?.trim() || "";
+  const url = target?.dataset?.url || "#";
+  const image = target?.querySelector('[data-field="image"]')?.getAttribute("src") || "";
+
+  const titleInput = document.getElementById("magicModalTitle");
+  const descriptionInput = document.getElementById("magicModalDescription");
+  const urlInput = document.getElementById("magicModalUrl");
+  const imageInput = document.getElementById("magicModalImage");
+
+  if (titleInput) titleInput.value = title;
+  if (descriptionInput) descriptionInput.value = description;
+  if (urlInput) urlInput.value = url;
+  if (imageInput) imageInput.value = image;
+  setImagePreview(document.getElementById("magicModalImagePreview"), image);
+}
+
 async function previewLocalImage(file, inputElement, previewElement, selectElement) {
   const reader = new FileReader();
   const dataUrl = await new Promise((resolve, reject) => {
@@ -223,6 +559,26 @@ async function uploadModalImage(file, type, { inputElement, previewElement, sele
   }
 }
 
+async function uploadMagicCardImage(file, inputElement, previewElement) {
+  if (!file) return;
+
+  try {
+    showToast("正在上传魔术卡片图片...", "info");
+    const result = await uploadImage(file, "magic-card");
+    if (inputElement) inputElement.value = result.url;
+    setImagePreview(previewElement, result.url);
+    showToast("图片已上传到 R2", "success");
+  } catch (error) {
+    if (error.status === 401) {
+      handleLogout();
+      showToast("登录已过期，请重新登录", "error");
+      return;
+    }
+
+    showToast(error.message || "图片上传失败，卡片尚未保存", "error");
+  }
+}
+
 function openItemModal(type, { mode = "edit", target = null } = {}) {
   const modal = document.getElementById("itemModal");
   if (!modal) return;
@@ -232,9 +588,11 @@ function openItemModal(type, { mode = "edit", target = null } = {}) {
   const title = document.getElementById("itemModalTitle");
   const siteFields = document.getElementById("itemModalSiteFields");
   const socialFields = document.getElementById("itemModalSocialFields");
+  const magicCardFields = document.getElementById("itemModalMagicCardFields");
 
   siteFields?.classList.add("hidden");
   socialFields?.classList.add("hidden");
+  magicCardFields?.classList.add("hidden");
 
   if (type === "site") {
     if (title) title.textContent = mode === "create" ? "添加站点" : "编辑站点";
@@ -246,6 +604,12 @@ function openItemModal(type, { mode = "edit", target = null } = {}) {
     if (title) title.textContent = mode === "create" ? "添加社交链接" : "编辑社交链接";
     socialFields?.classList.remove("hidden");
     fillSocialModal(target);
+  }
+
+  if (type === "magic-card") {
+    if (title) title.textContent = mode === "create" ? "添加魔术卡片" : "编辑魔术卡片";
+    magicCardFields?.classList.remove("hidden");
+    fillMagicCardModal(target);
   }
 
   modal.classList.remove("hidden");
@@ -288,6 +652,15 @@ function createSocialPayloadFromModal() {
   };
 }
 
+function createMagicCardPayloadFromModal() {
+  const title = document.getElementById("magicModalTitle")?.value?.trim() || "";
+  const description = document.getElementById("magicModalDescription")?.value?.trim() || "";
+  const url = document.getElementById("magicModalUrl")?.value?.trim() || "#";
+  const image = document.getElementById("magicModalImage")?.value?.trim() || "";
+
+  return { title, description, url, image };
+}
+
 function handleItemModalSave(event) {
   event?.preventDefault?.();
 
@@ -322,6 +695,32 @@ function handleItemModalSave(event) {
       updateSocialLinkElement(itemModalState.target, social);
       showToast("已更新社交链接", "success");
     }
+    refreshLayout();
+    closeItemModal();
+    return;
+  }
+
+  if (itemModalState.type === "magic-card") {
+    const magicCard = createMagicCardPayloadFromModal();
+    if (!magicCard.title) {
+      showToast("请填写卡片标题", "error");
+      return;
+    }
+
+    if (itemModalState.mode === "create") {
+      const index = document.querySelectorAll('[data-editable="magic-card"]').length;
+      insertMagicCardElement(
+        createMagicCardElement(
+          { id: generateId(), ...magicCard },
+          { index, isEditMode: true },
+        ),
+      );
+      showToast("已添加魔术卡片", "success");
+    } else {
+      updateMagicCardElement(itemModalState.target, magicCard);
+      showToast("已更新魔术卡片", "success");
+    }
+
     refreshLayout();
     closeItemModal();
   }
@@ -429,6 +828,26 @@ function wireItemModalUi() {
     socialImageFile.value = "";
   });
 
+  const magicImageInput = document.getElementById("magicModalImage");
+  const magicImagePreview = document.getElementById("magicModalImagePreview");
+  const magicImageUploadButton = document.getElementById("magicModalImageUploadBtn");
+  const magicImageFile = document.getElementById("magicModalImageFile");
+
+  magicImageInput?.addEventListener("input", () =>
+    setImagePreview(magicImagePreview, magicImageInput.value),
+  );
+
+  magicImageUploadButton?.addEventListener("click", (event) => {
+    event.preventDefault();
+    magicImageFile?.click();
+  });
+
+  magicImageFile?.addEventListener("change", async () => {
+    const file = magicImageFile.files?.[0];
+    await uploadMagicCardImage(file, magicImageInput, magicImagePreview);
+    magicImageFile.value = "";
+  });
+
   document.addEventListener("click", (event) => {
     const target = event.target;
     if (
@@ -462,6 +881,7 @@ function refreshLayout() {
 
 function renderCurrentConfig(config, { isEditMode = isInEditMode() } = {}) {
   renderConfig(config, { isEditMode });
+  syncMagicCardsViewport();
   syncLayout(config?.layout, { enabled: isEditMode });
 }
 
@@ -627,8 +1047,6 @@ function addTimelineItem() {
   const container = document.getElementById("timelineItems");
   if (!container) return;
 
-  const addButton = container.querySelector(".edit-add-btn");
-  const index = container.querySelectorAll('[data-editable="timeline"]').length;
   const item = createTimelineItemElement(
     {
       id: generateId(),
@@ -636,13 +1054,22 @@ function addTimelineItem() {
       title: "新事件",
       highlight: false,
     },
-    { index, isEditMode: true },
+    { index: 0, isEditMode: true },
   );
 
-  if (addButton) {
-    container.insertBefore(item, addButton);
-  } else {
-    container.append(item);
+  const firstTimelineItem = container.querySelector('[data-editable="timeline"]');
+  const insertionTarget = firstTimelineItem || null;
+  if (insertionTarget) container.insertBefore(item, insertionTarget);
+  else container.append(item);
+
+  const titleField = item.querySelector('[data-field="title"]');
+  titleField?.focus();
+  if (titleField) {
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(titleField);
+    selection?.removeAllRanges();
+    selection?.addRange(range);
   }
 
   refreshLayout();
@@ -651,6 +1078,10 @@ function addTimelineItem() {
 
 function addSiteCard() {
   openItemModal("site", { mode: "create" });
+}
+
+function addMagicCard() {
+  openItemModal("magic-card", { mode: "create" });
 }
 
 function addSocialLink() {
@@ -683,6 +1114,7 @@ function handleDeleteItem(button) {
 function wireLinkInteractions() {
   const sitesContainer = document.getElementById("sitesContainer");
   const socialContainer = document.getElementById("socialLinksContainer");
+  const magicCardsContainer = document.getElementById("magicCardsContainer");
 
   sitesContainer?.addEventListener("click", (event) => {
     if (event.target.closest(".edit-delete-btn") || event.target.closest(".edit-add-btn")) {
@@ -736,11 +1168,253 @@ function wireLinkInteractions() {
     }
   });
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape" && !document.getElementById("itemModal")?.classList.contains("hidden")) {
-      closeItemModal();
+  magicCardsContainer?.addEventListener("click", (event) => {
+    if (event.target.closest(".edit-delete-btn") || event.target.closest(".edit-add-btn")) {
+      return;
     }
+
+    const card = event.target.closest('[data-editable="magic-card"]');
+    if (!card) return;
+
+    if (isInEditMode()) {
+      event.preventDefault();
+      openItemModal("magic-card", { mode: "edit", target: card });
+      return;
+    }
+
+    const action = event.target.closest?.("[data-magic-action]");
+    if (!action || !card.contains(action)) return;
+
+    event.preventDefault();
+    if (action.dataset.magicAction === "preview") {
+      openMagicCardViewer(card, action);
+      return;
+    }
+
+    navigateToUrl(card.dataset.url);
   });
+
+  magicCardsContainer?.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const card = event.target.closest?.('[data-editable="magic-card"]');
+    const action = event.target.closest?.("[data-magic-action]");
+    if (!card || !action || !card.contains(action)) return;
+
+    event.preventDefault();
+    if (isInEditMode()) {
+      openItemModal("magic-card", { mode: "edit", target: card });
+      return;
+    }
+
+    if (action.dataset.magicAction === "preview") {
+      openMagicCardViewer(card, action);
+      return;
+    }
+
+    navigateToUrl(card.dataset.url);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    if (isMagicCardViewerOpen()) {
+      event.preventDefault();
+      closeMagicCardViewer();
+      return;
+    }
+    if (!document.getElementById("itemModal")?.classList.contains("hidden")) closeItemModal();
+  });
+}
+
+function wireMagicCardMotion() {
+  const container = document.getElementById("magicCardsContainer");
+  if (!container) return;
+
+  let pending = null;
+  let frameId = 0;
+
+  const flushSpotlight = () => {
+    frameId = 0;
+    if (!pending?.card?.isConnected) return;
+
+    pending.card.style.setProperty("--magic-spot-x", `${pending.x}%`);
+    pending.card.style.setProperty("--magic-spot-y", `${pending.y}%`);
+    pending = null;
+  };
+
+  container.addEventListener("pointermove", (event) => {
+    if (event.pointerType === "touch") return;
+
+    const card = event.target.closest?.('[data-editable="magic-card"]');
+    if (!card || !container.contains(card)) return;
+
+    const rect = card.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, ((event.clientX - rect.left) / rect.width) * 100));
+    const y = Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100));
+    pending = { card, x, y };
+
+    if (!frameId) frameId = requestAnimationFrame(flushSpotlight);
+  });
+
+  container.addEventListener("pointerover", (event) => {
+    if (event.pointerType === "touch") return;
+
+    const card = event.target.closest?.('[data-editable="magic-card"]');
+    if (!card || !container.contains(card)) return;
+    card.classList.add("magic-card--active");
+  });
+
+  container.addEventListener("pointerout", (event) => {
+    const card = event.target.closest?.('[data-editable="magic-card"]');
+    const relatedTarget = event.relatedTarget;
+    if (!card || card.contains(relatedTarget)) return;
+
+    card.classList.remove("magic-card--active");
+    card.style.setProperty("--magic-spot-x", "50%");
+    card.style.setProperty("--magic-spot-y", "50%");
+  });
+}
+
+function wireMagicCardsViewport() {
+  const section = document.getElementById("magicCardsSection");
+  if (!section?.parentElement) return;
+
+  let spacer = document.getElementById("magicCardsFlowSpacer");
+  if (!spacer) {
+    spacer = document.createElement("div");
+    spacer.id = "magicCardsFlowSpacer";
+    spacer.setAttribute("aria-hidden", "true");
+    section.parentElement.insertBefore(spacer, section);
+  }
+
+  let viewportState = "flow";
+  let syncFrameId = 0;
+  let enterFrameId = 0;
+  let sectionAnimation = null;
+
+  const cancelPendingEnter = () => {
+    if (!enterFrameId) return;
+    window.cancelAnimationFrame(enterFrameId);
+    enterFrameId = 0;
+  };
+
+  const cancelSectionAnimation = () => {
+    sectionAnimation?.cancel();
+    sectionAnimation = null;
+  };
+
+  const resetToFlow = () => {
+    cancelPendingEnter();
+    cancelSectionAnimation();
+    section.classList.remove("magic-section--peek-visible", "magic-section--peek");
+    spacer.style.height = "0px";
+    viewportState = "flow";
+  };
+
+  const exitPeek = () => {
+    if (viewportState !== "peek") {
+      resetToFlow();
+      return;
+    }
+
+    cancelPendingEnter();
+    cancelSectionAnimation();
+
+    const firstRect = section.getBoundingClientRect();
+    section.classList.remove("magic-section--peek-visible", "magic-section--peek");
+    spacer.style.height = "0px";
+    viewportState = "flow";
+
+    const lastRect = section.getBoundingClientRect();
+    const deltaX = firstRect.left - lastRect.left;
+    const deltaY = firstRect.top - lastRect.top;
+    if (
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      typeof section.animate !== "function" ||
+      Math.hypot(deltaX, deltaY) < 1
+    ) {
+      return;
+    }
+
+    sectionAnimation = section.animate(
+      [
+        { transform: `translate(${deltaX}px, ${deltaY}px)`, opacity: 0.9 },
+        { transform: "translate(0, 0)", opacity: 1 },
+      ],
+      {
+        duration: 560,
+        easing: "cubic-bezier(0.16, 1, 0.3, 1)",
+      },
+    );
+    sectionAnimation.onfinish = () => {
+      sectionAnimation = null;
+    };
+    sectionAnimation.oncancel = () => {
+      sectionAnimation = null;
+    };
+  };
+
+  const enterPeek = () => {
+    if (viewportState === "peek") return;
+
+    cancelSectionAnimation();
+    const sectionHeight = Math.ceil(section.getBoundingClientRect().height);
+    if (!sectionHeight) return;
+
+    spacer.style.height = `${sectionHeight}px`;
+    section.classList.add("magic-section--peek");
+    viewportState = "peek";
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      section.classList.add("magic-section--peek-visible");
+      return;
+    }
+
+    enterFrameId = window.requestAnimationFrame(() => {
+      enterFrameId = 0;
+      if (viewportState === "peek") {
+        section.classList.add("magic-section--peek-visible");
+      }
+    });
+  };
+
+  const sync = () => {
+    syncFrameId = 0;
+
+    const hasCards = Boolean(section.querySelector('[data-editable="magic-card"]'));
+    const isHidden = section.style.display === "none";
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    if (!hasCards || isHidden || !isDesktop || isInEditMode()) {
+      resetToFlow();
+      return;
+    }
+
+    const sectionTop = spacer.getBoundingClientRect().top;
+    const enterThreshold = window.innerHeight * 0.86;
+    const exitThreshold = window.innerHeight * 0.72;
+
+    if (viewportState === "peek") {
+      if (sectionTop <= exitThreshold) exitPeek();
+      return;
+    }
+
+    if (sectionTop > enterThreshold) enterPeek();
+  };
+
+  const scheduleSync = () => {
+    if (syncFrameId) return;
+    syncFrameId = window.requestAnimationFrame(sync);
+  };
+
+  window.addEventListener("scroll", scheduleSync, { passive: true });
+  window.addEventListener("resize", scheduleSync);
+
+  if (typeof ResizeObserver === "function") {
+    const observer = new ResizeObserver(scheduleSync);
+    observer.observe(section);
+  }
+
+  syncMagicCardsViewport = sync;
+  sync();
 }
 
 function setTheme(theme) {
@@ -832,7 +1506,10 @@ function initializeAuthUi() {
 
 function bootstrap() {
   wireItemModalUi();
+  wireMagicCardViewer();
   wireLinkInteractions();
+  wireMagicCardMotion();
+  wireMagicCardsViewport();
   initializeTheme();
   initializeAuthUi();
   startClockUpdates();
@@ -855,6 +1532,7 @@ window.handleImageUpload = handleImageUpload;
 window.deleteEditableItem = handleDeleteItem;
 window.addTimelineItem = addTimelineItem;
 window.addSiteCard = addSiteCard;
+window.addMagicCard = addMagicCard;
 window.addSocialLink = addSocialLink;
 window.addTag = addTag;
 window.closeItemModal = closeItemModal;
